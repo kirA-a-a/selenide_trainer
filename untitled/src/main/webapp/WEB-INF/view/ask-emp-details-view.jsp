@@ -335,7 +335,7 @@
         <!-- Кликабельная иконка курса -->
         <div class="course-icon" data-test-id="back-to-mainPage" onclick="window.location.href='http://localhost:8080/'" title="Вернуться на главную"></div>
         <h2 data-test-id="form-title">Регистрация в курсе</h2>
-        <form:form method="post" action="showDetails" modelAttribute="employee" data-test-id="registration-form">
+        <form:form method="get" action="showDetails" modelAttribute="employee" data-test-id="registration-form">
             <form:input path="employeeName" placeholder="Введите ваше имя" cssClass="safronov-input ${status.error ? 'error-field' : ''}" data-test-id="employee-name-input"/>
             <form:errors path="employeeName" cssClass="error"/>
             <form:input path="employeeSurname" placeholder="Введите вашу фамилию" cssClass="safronov-input ${status.error ? 'error-field' : ''}" data-test-id="employee-surname-input"/>
