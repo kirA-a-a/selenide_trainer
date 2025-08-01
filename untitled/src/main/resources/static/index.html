@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Список страниц</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* Базовый стиль */
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            color: #333;
+            position: relative;
+            padding-bottom: 60px;
+        }
+
+        /* Контейнер таблицы */
+        .safronov-table {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            width: 100%;
+            max-width: 600px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            position: relative;
+            margin: 32px 0 0 0;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* Иконка таблицы */
+        .safronov-table::before {
+            content: "📘";
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 50px;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 8px 16px;
+            border-radius: 50%;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Заголовок таблицы */
+        .safronov-table h2 {
+            color: #333;
+            text-align: center;
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 32px;
+            letter-spacing: 0.8px;
+            position: relative;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .safronov-table h2::after {
+            content: "";
+            display: block;
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 16px auto 0;
+            border-radius: 2px;
+        }
+
+        /* Стили таблицы */
+        .safronov-table table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 24px;
+        }
+
+        .safronov-table th,
+        .safronov-table td {
+            padding: 20px;
+            text-align: left;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .safronov-table th {
+            color: #333;
+            font-weight: 600;
+            background: rgba(102, 126, 234, 0.1);
+            font-size: 16px;
+        }
+
+        .safronov-table td {
+            font-size: 16px;
+            line-height: 1.5;
+        }
+
+        /* Стиль ссылки в таблице */
+        .safronov-link {
+            color: #667eea;
+            text-decoration: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            padding: 8px 16px;
+            border-radius: 8px;
+            display: inline-block;
+        }
+
+        .safronov-link:hover {
+            color: #764ba2;
+            background: rgba(102, 126, 234, 0.1);
+            transform: translateY(-2px);
+        }
+
+        /* Анимация для строк таблицы */
+        .safronov-table tr {
+            transition: all 0.3s ease;
+        }
+
+        .safronov-table tr:hover {
+            background: rgba(102, 126, 234, 0.05);
+            transform: translateX(5px);
+        }
+
+        /* Футер */
+        .footer {
+            width: 100%;
+            text-align: center;
+            padding: 12px 0;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            color: white;
+            font-size: 14px;
+            opacity: 0.9;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+        }
+    </style>
+</head>
+<body>
+<div class="safronov-table" data-test-id="safronov-table-container">
+    <h2 data-test-id="table-title">Список страниц для тренировки</h2>
+    <table data-test-id="training-pages-table">
+        <tr>
+            <th>Название страницы</th>
+            <th>Описание</th>
+        </tr>
+        <tr>
+            <td>
+                <a href="/askDetails.html" class="safronov-link" data-test-id="ask-details-link">
+                    Форма регистрации
+                </a>
+            </td>
+            <td>Страница для практики работы с распространенными UI элементами</td>
+        </tr>
+    </table>
+</div>
+<div class="footer" data-test-id="trainer-footer">Safronov_ID • Тренажер для AQA</div>
+</body>
+</html> 
