@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Добро пожаловать</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* Базовый стиль */
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            color: #333;
+            position: relative;
+            padding-bottom: 60px;
+        }
+
+        /* Контейнер приветствия */
+        .safronov-welcome {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 48px;
+            width: 100%;
+            max-width: 550px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            position: relative;
+            margin: 32px 0 0 0;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* Иконка курса */
+        .safronov-welcome::before {
+            content: "🎓";
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 50px;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 8px 16px;
+            border-radius: 50%;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Заголовок */
+        .safronov-welcome h1 {
+            color: #333;
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 24px;
+            position: relative;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .safronov-welcome h1::after {
+            content: "";
+            display: block;
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 16px auto 0;
+            border-radius: 2px;
+        }
+
+        /* Подзаголовок */
+        .safronov-welcome p {
+            color: #555;
+            font-size: 20px;
+            line-height: 1.6;
+            margin-bottom: 32px;
+            text-align: left;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Кнопка */
+        .safronov-btn {
+            display: inline-block;
+            margin-top: 24px;
+            padding: 16px 32px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .safronov-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .safronov-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        .safronov-btn:hover::before {
+            left: 100%;
+        }
+
+        .safronov-btn:active {
+            transform: translateY(-1px);
+        }
+
+        /* Блок с текстом */
+        .info-block {
+            color: #555;
+            font-size: 18px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            text-align: left;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+            padding: 12px 16px;
+            background: rgba(102, 126, 234, 0.05);
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+            transition: all 0.3s ease;
+        }
+
+        .info-block:hover {
+            background: rgba(102, 126, 234, 0.1);
+            transform: translateX(5px);
+        }
+
+        /* Выделение важной информации */
+        .info-block span {
+            font-weight: 600;
+            color: #667eea;
+        }
+
+        /* Футер */
+        .footer {
+            width: 100%;
+            text-align: center;
+            padding: 12px 0;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            color: white;
+            font-size: 14px;
+            opacity: 0.9;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+        }
+    </style>
+</head>
+<body>
+<div class="safronov-welcome" data-test-id="welcome-container">
+    <h1 data-test-id="welcome-title">Добро пожаловать!</h1>
+    <div data-test-id="welcome-message" id="welcomeMessage">
+        <div class="info-block">Здравствуйте, <span id="employeeName">Иван</span> <span id="employeeSurname">Иванов</span>.</div>
+        <div class="info-block">Ваш email: <span id="email">ivan@example.com</span></div>
+        <div class="info-block">Рад Вас приветствовать в тренажере по работе с селенидом.</div>
+        <div class="info-block">Вы будете писать автотесты используя Java <span id="javaVersion">17</span>.</div>
+        <div class="info-block" id="experienceBlock">Вы уже занимались автотестированием.</div>
+        <div class="info-block" id="languagesBlock">Владеете языками программирования: Java, Python</div>
+    </div>
+    <button class="safronov-btn" data-test-id="back-button" onclick="window.location.href='/askDetails.html'">Назад</button>
+</div>
+<div class="footer" data-test-id="trainer-footer">Safronov_ID • Тренажер для AQA</div>
+
+<script>
+// Функция для получения параметров из URL
+function getUrlParameter(name) {
+    name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+    var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+    var results = regex.exec(location.search);
+    return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+}
+
+// Функция для обновления содержимого страницы
+function updateContent() {
+    // Получаем данные из URL параметров
+    var employeeName = getUrlParameter('employeeName') || 'Иван';
+    var employeeSurname = getUrlParameter('employeeSurname') || 'Иванов';
+    var email = getUrlParameter('email') || 'ivan@example.com';
+    var javaVersion = getUrlParameter('javaVersion') || '17';
+    var autoTestExperience = getUrlParameter('autoTestExperience') || 'да';
+    var programmingLanguages = getUrlParameter('programmingLanguages') || 'Java,Python';
+
+    // Обновляем содержимое
+    document.getElementById('employeeName').textContent = employeeName;
+    document.getElementById('employeeSurname').textContent = employeeSurname;
+    document.getElementById('email').textContent = email;
+    document.getElementById('javaVersion').textContent = javaVersion;
+
+    // Обновляем блок с опытом
+    var experienceText = autoTestExperience === 'да' ? 
+        'Вы уже занимались автотестированием.' : 
+        'Это ваш первый опыт в автотестировании.';
+    document.getElementById('experienceBlock').textContent = experienceText;
+
+    // Обновляем блок с языками программирования
+    if (programmingLanguages.includes('none')) {
+        document.getElementById('languagesBlock').textContent = 'Языками программирования не владею';
+    } else {
+        var languages = programmingLanguages.split(',').filter(lang => lang.trim() !== 'none').join(', ');
+        document.getElementById('languagesBlock').textContent = 'Владеете языками программирования: ' + languages;
+    }
+}
+
+// Запускаем обновление при загрузке страницы
+window.onload = updateContent;
+</script>
+</body>
+</html> 

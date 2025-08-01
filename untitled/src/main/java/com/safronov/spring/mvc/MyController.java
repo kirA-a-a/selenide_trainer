@@ -3,30 +3,30 @@ package com.safronov.spring.mvc;
 import com.safronov.spring.mvc.untitled.entity.Employee;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 
 @Controller
 public class MyController {
 
-    @RequestMapping("/")
+    @GetMapping("/")
     public String showFirstView(){
-        return "myView";
+        return "redirect:/index.html";
     }
 
-    @RequestMapping("askDetails")
+    @GetMapping("/askDetails")
     public String askEmployeeDetails(@ModelAttribute("employee") Employee employee) {
-        return "ask-emp-details-view";
+        return "redirect:/askDetails.html";
     }
 
-    @RequestMapping("showDetails")
+    @PostMapping("/showDetails")
     public String showEmpDetails(@Valid @ModelAttribute("employee") Employee employee,
                                BindingResult bindingResult){
         if(bindingResult.hasErrors()){
-            return "ask-emp-details-view";
+            return "redirect:/askDetails.html";
         }
-        return "show-emp-details-view";
+        return "redirect:/showDetails.html";
     }
 }

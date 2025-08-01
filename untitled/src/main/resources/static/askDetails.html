@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Employee Details Form</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* Базовый стиль */
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        /* Контейнер формы */
+        .form-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 600px;
+            margin: 0 auto;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            position: relative;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* Иконка формы */
+        .form-container::before {
+            content: "";
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+
+        /* Иконка внутри кружка */
+        .form-container::after {
+            content: "📝";
+            position: absolute;
+            top: -22px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 30px;
+            color: #333;
+            transition: all 0.3s ease, content 0.3s ease;
+            z-index: 11;
+            pointer-events: none;
+        }
+
+        /* Стрелка вместо иконки при наведении на кружок */
+        .form-container.showing-arrow::after {
+            content: "←";
+            font-size: 25px;
+            color: white;
+            animation: arrowAppear 2s ease-in-out;
+        }
+
+        /* Явная анимация появления стрелки */
+        @keyframes arrowAppear {
+            0% { 
+                opacity: 0; 
+                transform: translateX(-50%) scale(0.1);
+                color: transparent;
+            }
+            20% { 
+                opacity: 0.4; 
+                transform: translateX(-50%) scale(0.6);
+                color: #ffeb3b;
+            }
+            40% { 
+                opacity: 0.8; 
+                transform: translateX(-50%) scale(1.1);
+                color: #ffeb3b;
+            }
+            60% { 
+                opacity: 1; 
+                transform: translateX(-50%) scale(1.2);
+                color: #ffffff;
+            }
+            80% { 
+                opacity: 1; 
+                transform: translateX(-50%) scale(1.05);
+                color: #ffffff;
+            }
+            100% { 
+                opacity: 1; 
+                transform: translateX(-50%) scale(1);
+                color: #ffffff;
+            }
+        }
+
+        /* Дополнительная анимация для кружка при показе стрелки */
+        .form-container.showing-arrow::before {
+            animation: circlePulse 2s ease-out;
+        }
+
+        @keyframes circlePulse {
+            0% { 
+                transform: translateX(-50%) scale(1);
+                box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            }
+            30% { 
+                transform: translateX(-50%) scale(1.1);
+                box-shadow: 0 12px 35px rgba(102, 126, 234, 0.3);
+            }
+            60% { 
+                transform: translateX(-50%) scale(1.05);
+                box-shadow: 0 10px 30px rgba(102, 126, 234, 0.2);
+            }
+            100% { 
+                transform: translateX(-50%) scale(1);
+                box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            }
+        }
+
+        .form-container:hover::before {
+            transform: translateX(-50%) scale(1.1);
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Стили для кликабельной иконки после анимации */
+        .form-container.clickable::before {
+            cursor: pointer;
+        }
+
+        /* Заголовок */
+        h1 {
+            color: #333;
+            text-align: center;
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 32px;
+            position: relative;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        h1::after {
+            content: "";
+            display: block;
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 16px auto 0;
+            border-radius: 2px;
+        }
+
+        /* Стили полей */
+        .form-group {
+            margin-bottom: 28px;
+            position: relative;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #333;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .form-group:focus-within label {
+            color: #667eea;
+            transform: translateY(-2px);
+        }
+
+        input[type="text"],
+        input[type="email"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 16px 20px;
+            border: 2px solid #e1e5e9;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(5px);
+            position: relative;
+        }
+
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            transform: translateY(-2px);
+        }
+
+        /* Красивая CSS валидация */
+        input:invalid:not(:placeholder-shown) {
+            border-color: #ff6b6b;
+            background: rgba(255, 107, 107, 0.05);
+            box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
+        }
+
+        input:valid:not(:placeholder-shown) {
+            border-color: #51cf66;
+            background: rgba(81, 207, 102, 0.05);
+            box-shadow: 0 0 0 3px rgba(81, 207, 102, 0.1);
+        }
+
+        /* Убираем обводки для радио-кнопок и чекбоксов */
+        input[type="radio"]:invalid,
+        input[type="radio"]:valid,
+        input[type="checkbox"]:invalid,
+        input[type="checkbox"]:valid {
+            border-color: transparent !important;
+            background: transparent !important;
+            box-shadow: none !important;
+        }
+
+        /* Сообщения об ошибках */
+        .error-message {
+            color: #ff6b6b;
+            font-size: 14px;
+            margin-top: 6px;
+            display: none;
+            font-weight: 500;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        /* Анимация появления ошибок */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Анимация для валидных полей */
+        input:valid:not(:placeholder-shown)::after {
+            content: "";
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #51cf66;
+            font-weight: bold;
+        }
+
+        /* Стили для select */
+        select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 12px center;
+            background-repeat: no-repeat;
+            background-size: 16px;
+            padding-right: 40px;
+        }
+
+        /* Улучшенные стили чекбоксов */
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 12px;
+            padding: 16px;
+            background: rgba(102, 126, 234, 0.05);
+            border-radius: 12px;
+            border: 2px solid rgba(102, 126, 234, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .checkbox-group:hover {
+            background: rgba(102, 126, 234, 0.08);
+            border-color: rgba(102, 126, 234, 0.2);
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 16px;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(102, 126, 234, 0.2);
+            min-width: 120px;
+        }
+
+        .checkbox-item:hover {
+            background: rgba(102, 126, 234, 0.1);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+        }
+
+        input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            margin: 0;
+            accent-color: #667eea;
+            cursor: pointer;
+        }
+
+        /* Улучшенные стили радио кнопок */
+        .radio-group {
+            display: flex;
+            gap: 16px;
+            margin-top: 12px;
+            padding: 16px;
+            background: rgba(102, 126, 234, 0.05);
+            border-radius: 12px;
+            border: 2px solid rgba(102, 126, 234, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .radio-group:hover {
+            background: rgba(102, 126, 234, 0.08);
+            border-color: rgba(102, 126, 234, 0.2);
+        }
+
+        .radio-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 20px;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(102, 126, 234, 0.2);
+            min-width: 80px;
+            justify-content: center;
+        }
+
+        .radio-item:hover {
+            background: rgba(102, 126, 234, 0.1);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+        }
+
+        input[type="radio"] {
+            width: 20px;
+            height: 20px;
+            margin: 0;
+            accent-color: #667eea;
+            cursor: pointer;
+        }
+
+        /* Кнопка отправки */
+        .submit-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 16px 32px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .submit-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        .submit-btn:hover::before {
+            left: 100%;
+        }
+
+        .submit-btn:active {
+            transform: translateY(-1px);
+        }
+
+        /* Анимация загрузки для кнопки */
+        .submit-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        /* Футер */
+        .footer {
+            width: 100%;
+            text-align: center;
+            padding: 12px 0;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            color: white;
+            font-size: 14px;
+            opacity: 0.9;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* Анимации для полей */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        input:invalid:not(:placeholder-shown) {
+            animation: shake 0.3s ease-in-out;
+        }
+
+        /* Пульсация для валидных полей */
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(81, 207, 102, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(81, 207, 102, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(81, 207, 102, 0); }
+        }
+
+        input:valid:not(:placeholder-shown) {
+            animation: pulse 0.6s ease-out;
+        }
+    </style>
+</head>
+<body>
+<div class="form-container" data-test-id="employee-form-container">
+    <h1 data-test-id="form-title">Форма регистрации сотрудника</h1>
+    
+    <form id="employeeForm" data-test-id="employee-form">
+        <div class="form-group">
+            <label for="employeeName" data-test-id="name-label">Имя:</label>
+            <input type="text" id="employeeName" name="employeeName" data-test-id="name-input" 
+                   required minlength="2" maxlength="30" 
+                   pattern="[A-Za-zА-Яа-яЁё\s]+" 
+                   title="Имя должно содержать от 2 до 30 символов и только буквы"
+                   placeholder="Введите ваше имя">
+            <div class="error-message" id="nameError">Имя должно содержать от 2 до 30 символов и только буквы</div>
+        </div>
+
+        <div class="form-group">
+            <label for="employeeSurname" data-test-id="surname-label">Фамилия:</label>
+            <input type="text" id="employeeSurname" name="employeeSurname" data-test-id="surname-input" 
+                   required minlength="2" maxlength="30" 
+                   pattern="[A-Za-zА-Яа-яЁё\s]+" 
+                   title="Фамилия должна содержать от 2 до 30 символов и только буквы"
+                   placeholder="Введите вашу фамилию">
+            <div class="error-message" id="surnameError">Фамилия должна содержать от 2 до 30 символов и только буквы</div>
+        </div>
+
+        <div class="form-group">
+            <label for="email" data-test-id="email-label">Email:</label>
+            <input type="email" id="email" name="email" data-test-id="email-input" 
+                   required 
+                   title="Введите корректный email адрес"
+                   placeholder="example@email.com">
+            <div class="error-message" id="emailError">Введите корректный email адрес</div>
+        </div>
+
+        <div class="form-group">
+            <label for="javaVersion" data-test-id="java-version-label">Версия Java:</label>
+            <select id="javaVersion" name="javaVersion" data-test-id="java-version-select" required>
+                <option value="">Выберите версию</option>
+                <option value="8">Java 8</option>
+                <option value="11">Java 11</option>
+                <option value="17">Java 17</option>
+                <option value="21">Java 21</option>
+            </select>
+            <div class="error-message" id="javaVersionError">Пожалуйста, выберите версию Java</div>
+        </div>
+
+        <div class="form-group">
+            <label data-test-id="experience-label">Опыт автотестирования:</label>
+            <div class="radio-group" data-test-id="experience-radio-group">
+                <div class="radio-item">
+                    <input type="radio" id="experienceYes" name="autoTestExperience" value="да" data-test-id="experience-yes" required>
+                    <label for="experienceYes">Да</label>
+                </div>
+                <div class="radio-item">
+                    <input type="radio" id="experienceNo" name="autoTestExperience" value="нет" data-test-id="experience-no" required>
+                    <label for="experienceNo">Нет</label>
+                </div>
+            </div>
+            <div class="error-message" id="experienceError">Пожалуйста, выберите опыт автотестирования</div>
+        </div>
+
+        <div class="form-group">
+            <label data-test-id="languages-label">Языки программирования:</label>
+            <div class="checkbox-group" data-test-id="languages-checkbox-group">
+                <div class="checkbox-item">
+                    <input type="checkbox" id="java" name="programmingLanguages" value="Java" data-test-id="language-java">
+                    <label for="java">Java</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="python" name="programmingLanguages" value="Python" data-test-id="language-python">
+                    <label for="python">Python</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="javascript" name="programmingLanguages" value="JavaScript" data-test-id="language-javascript">
+                    <label for="javascript">JavaScript</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="csharp" name="programmingLanguages" value="C#" data-test-id="language-csharp">
+                    <label for="csharp">C#</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="none" name="programmingLanguages" value="none" data-test-id="language-none">
+                    <label for="none">Не владею</label>
+                </div>
+            </div>
+            <div class="error-message" id="languagesError">Пожалуйста, выберите языки программирования</div>
+        </div>
+
+        <button type="submit" class="submit-btn" data-test-id="submit-button">Продолжить</button>
+    </form>
+</div>
+
+<div class="footer" data-test-id="trainer-footer">Safronov_ID • Тренажер для AQA</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM загружен, инициализируем валидацию...');
+    
+    // Управление стрелкой и кликабельностью иконки
+    const formContainer = document.querySelector('.form-container');
+    let arrowTimeout;
+    let isClickable = false;
+    let isArrowVisible = false;
+    
+    // Создаем отдельный элемент для кружка
+    const iconCircle = document.createElement('div');
+    iconCircle.style.cssText = `
+        position: absolute;
+        top: -30px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 50%;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        cursor: pointer;
+        transition: all 0.3s ease;
+        z-index: 10;
+    `;
+    
+    // Добавляем кружок в контейнер
+    formContainer.appendChild(iconCircle);
+    
+    iconCircle.addEventListener('mouseenter', function() {
+        console.log('Наведение на кружок, показываем стрелку');
+        isArrowVisible = true;
+        formContainer.classList.add('showing-arrow');
+        
+        // Анимация стрелки длится 2 секунды
+        setTimeout(() => {
+            console.log('Анимация стрелки завершена, кнопка стала кликабельной');
+            isClickable = true;
+            iconCircle.classList.add('clickable');
+        }, 2000);
+    });
+    
+    iconCircle.addEventListener('mouseleave', function() {
+        console.log('Убрали курсор с кружка, возвращаем иконку');
+        isClickable = false;
+        isArrowVisible = false;
+        formContainer.classList.remove('showing-arrow');
+        iconCircle.classList.remove('clickable');
+    });
+    
+    // Обработчик клика по кружку
+    iconCircle.addEventListener('click', function() {
+        if (isClickable) {
+            console.log('Клик по стрелке, переходим на главную страницу');
+            window.location.href = '/index.html';
+        }
+    });
+    
+    // Функция для показа/скрытия сообщений об ошибках
+    function validateField(field, errorId, validationRules) {
+        const errorElement = document.getElementById(errorId);
+        const isValid = validationRules(field.value);
+        
+        if (!isValid && field.value.trim() !== '') {
+            errorElement.classList.add('show');
+        } else {
+            errorElement.classList.remove('show');
+        }
+    }
+
+    // Функция для принудительной валидации (показывает ошибки даже для пустых полей)
+    function validateFieldForce(field, errorId, validationRules) {
+        const errorElement = document.getElementById(errorId);
+        const isValid = validationRules(field.value);
+        
+        if (!isValid) {
+            errorElement.classList.add('show');
+            return false;
+        } else {
+            errorElement.classList.remove('show');
+            return true;
+        }
+    }
+
+    // Функция валидации всей формы
+    function validateForm() {
+        console.log('=== НАЧАЛО ВАЛИДАЦИИ ФОРМЫ ===');
+        let isValid = true;
+        
+        // Валидация имени
+        const nameField = document.getElementById('employeeName');
+        console.log('Имя:', nameField.value);
+        if (!validateFieldForce(nameField, 'nameError', validationRules.name)) {
+            console.log('❌ Имя невалидно');
+            isValid = false;
+        } else {
+            console.log('✅ Имя валидно');
+        }
+        
+        // Валидация фамилии
+        const surnameField = document.getElementById('employeeSurname');
+        console.log('Фамилия:', surnameField.value);
+        if (!validateFieldForce(surnameField, 'surnameError', validationRules.surname)) {
+            console.log('❌ Фамилия невалидна');
+            isValid = false;
+        } else {
+            console.log('✅ Фамилия валидна');
+        }
+        
+        // Валидация email
+        const emailField = document.getElementById('email');
+        console.log('Email:', emailField.value);
+        if (!validateFieldForce(emailField, 'emailError', validationRules.email)) {
+            console.log('❌ Email невалиден');
+            isValid = false;
+        } else {
+            console.log('✅ Email валиден');
+        }
+        
+        // Валидация версии Java
+        const javaField = document.getElementById('javaVersion');
+        console.log('Java версия:', javaField.value);
+        if (!validateFieldForce(javaField, 'javaVersionError', validationRules.javaVersion)) {
+            console.log('❌ Java версия не выбрана');
+            isValid = false;
+        } else {
+            console.log('✅ Java версия выбрана');
+        }
+        
+        // Валидация опыта автотестирования
+        const experienceRadios = document.querySelectorAll('input[name="autoTestExperience"]');
+        const experienceError = document.getElementById('experienceError');
+        const experienceSelected = Array.from(experienceRadios).some(radio => radio.checked);
+        console.log('Опыт выбран:', experienceSelected);
+        
+        if (!experienceSelected) {
+            console.log('❌ Опыт не выбран');
+            experienceError.classList.add('show');
+            isValid = false;
+        } else {
+            console.log('✅ Опыт выбран');
+            experienceError.classList.remove('show');
+        }
+        
+        // Валидация языков программирования
+        const languagesCheckboxes = document.querySelectorAll('input[name="programmingLanguages"]');
+        const languagesError = document.getElementById('languagesError');
+        const languagesSelected = Array.from(languagesCheckboxes).some(cb => cb.checked);
+        console.log('Языки выбраны:', languagesSelected);
+
+        if (!languagesSelected) {
+            console.log('❌ Языки не выбраны');
+            languagesError.classList.add('show');
+            isValid = false;
+        } else {
+            console.log('✅ Языки выбраны');
+            languagesError.classList.remove('show');
+        }
+        
+        console.log('=== РЕЗУЛЬТАТ ВАЛИДАЦИИ:', isValid ? 'ВАЛИДНА' : 'НЕВАЛИДНА', '===');
+        return isValid;
+    }
+
+    // Правила валидации
+    const validationRules = {
+        name: (value) => value.length >= 2 && value.length <= 30 && /^[A-Za-zА-Яа-яЁё\s]+$/.test(value),
+        surname: (value) => value.length >= 2 && value.length <= 30 && /^[A-Za-zА-Яа-яЁё\s]+$/.test(value),
+        email: (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value),
+        javaVersion: (value) => value !== '',
+        experience: (value) => value !== '',
+        languages: (value) => value !== 'none' // Проверяем, что не выбрано "Не владею"
+    };
+
+    // Обработчик отправки формы
+    document.getElementById('employeeForm').addEventListener('submit', function(e) {
+        console.log('Форма отправлена!');
+        e.preventDefault();
+        
+        console.log('Начинаем валидацию...');
+        if (validateForm()) {
+            console.log('Форма валидна, отправляем данные');
+            // Если форма валидна, отправляем данные
+            const formData = new FormData(this);
+            const data = {};
+            
+            // Собираем данные формы
+            for (let [key, value] of formData.entries()) {
+                if (key === 'programmingLanguages') {
+                    if (!data[key]) data[key] = [];
+                    data[key].push(value);
+                } else {
+                    data[key] = value;
+                }
+            }
+            
+            // Преобразуем языки программирования в строку
+            if (data.programmingLanguages) {
+                data.programmingLanguages = data.programmingLanguages.join(',');
+            }
+            
+            // Создаем URL с параметрами
+            const params = new URLSearchParams(data);
+            window.location.href = '/showDetails.html?' + params.toString();
+        } else {
+            console.log('Форма невалидна, показываем ошибки');
+        }
+    });
+
+    // Также добавим обработчик для кнопки на случай, если submit не срабатывает
+    document.querySelector('.submit-btn').addEventListener('click', function(e) {
+        console.log('Кнопка нажата!');
+        e.preventDefault();
+        
+        console.log('Начинаем валидацию через кнопку...');
+        if (validateForm()) {
+            console.log('Форма валидна, отправляем данные через кнопку');
+            const form = document.getElementById('employeeForm');
+            const formData = new FormData(form);
+            const data = {};
+            
+            // Собираем данные формы
+            for (let [key, value] of formData.entries()) {
+                if (key === 'programmingLanguages') {
+                    if (!data[key]) data[key] = [];
+                    data[key].push(value);
+                } else {
+                    data[key] = value;
+                }
+            }
+            
+            // Преобразуем языки программирования в строку
+            if (data.programmingLanguages) {
+                data.programmingLanguages = data.programmingLanguages.join(',');
+            }
+            
+            // Создаем URL с параметрами
+            const params = new URLSearchParams(data);
+            window.location.href = '/showDetails.html?' + params.toString();
+        } else {
+            console.log('Форма невалидна, показываем ошибки через кнопку');
+        }
+    });
+
+    // Обработчики событий для валидации
+    document.getElementById('employeeName').addEventListener('input', function() {
+        validateField(this, 'nameError', validationRules.name);
+    });
+
+    document.getElementById('employeeName').addEventListener('blur', function() {
+        validateField(this, 'nameError', validationRules.name);
+    });
+
+    document.getElementById('employeeSurname').addEventListener('input', function() {
+        validateField(this, 'surnameError', validationRules.surname);
+    });
+
+    document.getElementById('employeeSurname').addEventListener('blur', function() {
+        validateField(this, 'surnameError', validationRules.surname);
+    });
+
+    document.getElementById('email').addEventListener('input', function() {
+        validateField(this, 'emailError', validationRules.email);
+    });
+
+    document.getElementById('email').addEventListener('blur', function() {
+        validateField(this, 'emailError', validationRules.email);
+    });
+
+    document.getElementById('javaVersion').addEventListener('change', function() {
+        validateField(this, 'javaVersionError', validationRules.javaVersion);
+    });
+
+    // Валидация радио-кнопок для опыта
+    document.querySelectorAll('input[name="autoTestExperience"]').forEach(radio => {
+        radio.addEventListener('change', function() {
+            const experienceError = document.getElementById('experienceError');
+            if (this.checked) {
+                experienceError.classList.remove('show');
+            }
+        });
+    });
+
+    // Обработка чекбокса "Не владею"
+    document.getElementById('none').addEventListener('change', function() {
+        const checkboxes = document.querySelectorAll('input[name="programmingLanguages"]');
+        const languagesError = document.getElementById('languagesError');
+        
+        if (this.checked) {
+            // Если выбрано "Не владею", снимаем остальные
+            checkboxes.forEach(cb => {
+                if (cb !== this) cb.checked = false;
+            });
+            languagesError.classList.remove('show');
+        } else {
+            // Если сняли "Не владею", проверяем есть ли другие выбранные
+            const anyChecked = Array.from(checkboxes).some(cb => cb.checked);
+            if (!anyChecked) {
+                languagesError.classList.add('show');
+            }
+        }
+    });
+
+    // Если выбраны другие языки, снимаем "Не владею"
+    document.querySelectorAll('input[name="programmingLanguages"]').forEach(cb => {
+        if (cb.id !== 'none') {
+            cb.addEventListener('change', function() {
+                const languagesError = document.getElementById('languagesError');
+                if (this.checked) {
+                    document.getElementById('none').checked = false;
+                    languagesError.classList.remove('show');
+                } else {
+                    // Проверяем, остались ли выбранные языки
+                    const checkboxes = document.querySelectorAll('input[name="programmingLanguages"]');
+                    const anyChecked = Array.from(checkboxes).some(cb => cb.checked);
+                    if (!anyChecked) {
+                        languagesError.classList.add('show');
+                    }
+                }
+            });
+        }
+    });
+    
+    console.log('Валидация инициализирована!');
+});
+</script>
+</body>
+</html> 
