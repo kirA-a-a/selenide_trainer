@@ -36,3 +36,18 @@ build/
 
 ### Mac OS ###
 .DS_Store
+
+### Logs ###
+*.log
+logs/
+
+### Temporary files ###
+*.tmp
+*.temp
+*.swp
+*.swo
+
+### OS generated files ###
+Thumbs.db
+ehthumbs.db
+Desktop.ini
