@@ -2,7 +2,8 @@ package com.safronov.spring.mvc;
 
 import com.safronov.spring.mvc.untitled.entity.Employee;
 import jakarta.validation.Valid;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,9 +13,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 /**
  * Контроллер для обработки запросов, связанных с информацией о сотрудниках
  */
-@Slf4j
 @Controller
 public class MyController {
+
+    private static final Logger log = LoggerFactory.getLogger(MyController.class);
 
     /**
      * Перенаправляет на главную страницу
@@ -46,7 +48,7 @@ public class MyController {
             return "redirect:/askDetails.html";
         }
         
-        log.info("Данные сотрудника успешно обработаны: {}", employee.getEmployeeName());
+        log.info("Данные сотрудника успешно обработаны: {}", employee.getEmployeeName() != null ? employee.getEmployeeName() : "неизвестно");
         return "redirect:/showDetails.html";
     }
 }
