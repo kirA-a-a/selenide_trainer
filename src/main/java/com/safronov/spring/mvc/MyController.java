@@ -51,4 +51,13 @@ public class MyController {
         log.info("Данные сотрудника успешно обработаны: {}", employee.getEmployeeName() != null ? employee.getEmployeeName() : "неизвестно");
         return "redirect:/showDetails.html";
     }
+
+    /**
+     * Перенаправляет на страницу с Basic авторизацией
+     */
+    @GetMapping("/basic-auth")
+    public String showBasicAuthPage() {
+        log.info("Перенаправление на страницу с Basic авторизацией");
+        return "redirect:/basic_authentication.html";
+    }
 }

@@ -157,13 +157,52 @@
         <tr>
             <td>
                 <a href="/askDetails.html" class="safronov-link" data-test-id="ask-details-link">
-                    Форма регистрации
+                    📝 Форма регистрации
                 </a>
             </td>
             <td>Страница для практики работы с распространенными UI элементами</td>
         </tr>
+        <tr>
+            <td>
+                <a href="/basic_authentication.html" class="safronov-link" data-test-id="basic-auth-link">
+                    🔐 HTTP Basic Authentication
+                </a>
+            </td>
+            <td>Страница с защищенным доступом через HTTP Basic авторизацию</td>
+        </tr>
+        <tr>
+            <td>
+                <a href="/jwt_authentication.html" class="safronov-link" data-test-id="jwt-auth-link">
+                    🔑 JWT Token Authentication
+                </a>
+            </td>
+            <td>Страница с защищенным доступом через JWT Bearer токен авторизацию</td>
+        </tr>
     </table>
 </div>
 <div class="footer" data-test-id="trainer-footer">Safronov_ID • Тренажер для AQA</div>
+
+<script>
+    // Функция для очистки всех авторизационных токенов при загрузке главной страницы
+    function clearAllAuthTokens() {
+        try {
+            // Очищаем JWT токен из localStorage
+            localStorage.removeItem('jwt_token');
+            
+            // Очищаем Basic Auth из sessionStorage
+            sessionStorage.removeItem('basic_auth');
+            sessionStorage.removeItem('basic_auth_credentials');
+            
+            console.log('Все авторизационные токены очищены на главной странице');
+        } catch (error) {
+            console.error('Ошибка при очистке токенов на главной странице:', error);
+        }
+    }
+
+    // Очищаем токены при загрузке страницы
+    document.addEventListener('DOMContentLoaded', function() {
+        clearAllAuthTokens();
+    });
+</script>
 </body>
 </html> 

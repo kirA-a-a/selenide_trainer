@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JWT Authentication - Safronov_ID</title>
+    <style>
+        /* Базовый стиль */
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #F5F7FA;
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 0;
+            color: #333;
+            position: relative;
+            padding-bottom: 60px;
+        }
+
+        /* Основной контейнер */
+        .safronov-container {
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            width: 100%;
+            max-width: 600px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            position: relative;
+            text-align: center;
+            margin: 32px 0 0 0;
+        }
+
+        /* Иконка курса */
+        .course-icon {
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 50px;
+            background: white;
+            border-radius: 50%;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            z-index: 2;
+            font-size: 0;
+        }
+
+        .course-icon::before,
+        .course-icon::after {
+            content: "";
+            position: absolute;
+            width: 20px;
+            height: 2px;
+            background: #4A90E2;
+            transition: all 0.3s ease;
+        }
+
+        .course-icon::before {
+            transform: rotate(45deg);
+        }
+
+        .course-icon::after {
+            transform: rotate(-45deg);
+        }
+
+        .course-icon:hover {
+            transform: translateX(-50%) scale(1.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .course-icon:hover::before {
+            transform: rotate(225deg);
+        }
+
+        .course-icon:hover::after {
+            transform: rotate(135deg);
+        }
+
+        /* Заголовок */
+        h1 {
+            color: #2C3E50;
+            font-size: 28px;
+            font-weight: 700;
+            margin: 0 0 20px 0;
+            text-align: center;
+        }
+
+        /* Сообщение об авторизации */
+        .auth-message {
+            background: #E8F4FD;
+            border: 1px solid #B3D9F2;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            color: #2C5AA0;
+            font-size: 18px;
+            font-weight: 500;
+            line-height: 1.6;
+        }
+
+        .auth-message::before {
+            content: "🔑";
+            display: block;
+            font-size: 32px;
+            margin-bottom: 12px;
+        }
+
+        /* Информационный блок */
+        .info-block {
+            background: #F8F9FA;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 16px 0;
+            border-left: 4px solid #4A90E2;
+            text-align: left;
+        }
+
+        .info-block h3 {
+            color: #2C3E50;
+            margin: 0 0 10px 0;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .info-block p {
+            margin: 8px 0;
+            color: #666;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        /* Кнопка */
+        .safronov-btn {
+            width: 100%;
+            padding: 14px;
+            background-color: #4A90E2;
+            color: white;
+            font-size: 18px;
+            font-weight: 600;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            margin-top: 20px;
+        }
+
+        .safronov-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(74, 144, 226, 0.25);
+        }
+
+        .safronov-btn::after {
+            content: "🔙";
+            position: absolute;
+            right: 28px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .safronov-btn:hover::after {
+            transform: translateY(-50%) rotate(10deg);
+        }
+
+        /* Футер */
+        .footer {
+            width: 100%;
+            text-align: center;
+            padding: 8px 0;
+            background: #F5F7FA;
+            color: #666;
+            font-size: 14px;
+            opacity: 0.9;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+        }
+
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .safronov-container {
+                margin: 16px;
+                padding: 24px;
+            }
+            
+            h1 {
+                font-size: 24px;
+            }
+            
+            .auth-message {
+                font-size: 16px;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="safronov-container" data-test-id="jwt-auth-container">
+        <div class="course-icon" data-test-id="course-icon"></div>
+        
+        <h1 data-test-id="page-title">JWT Token Authentication</h1>
+        
+        <div class="auth-message" data-test-id="auth-message">
+            Вы авторизовались на странице с JWT токен авторизацией
+        </div>
+        
+        <div class="info-block" data-test-id="auth-info">
+            <h3>Информация об авторизации:</h3>
+            <p><strong>Тип:</strong> JWT Bearer Token Authentication с автоматической солью</p>
+            <p><strong>Пользователь:</strong> jwt</p>
+            <p><strong>Пароль:</strong> jwt</p>
+            <p><strong>Роль:</strong> JWT_USER</p>
+            <p><strong>Метод:</strong> Bearer токен в заголовке Authorization</p>
+            <p><strong>Соль:</strong> Автоматически генерируется для каждого токена</p>
+            <p><strong>Очистка токенов:</strong> При возврате на главную все токены будут очищены</p>
+        </div>
+        
+        <button class="safronov-btn" data-test-id="back-button" onclick="goBack()">
+            Вернуться на главную
+        </button>
+        
+        <button class="safronov-btn" data-test-id="auth-button" onclick="requestJwtAuth()" style="margin-top: 10px; background-color: #28a745;">
+            Получить JWT токен
+        </button>
+        
+        <button class="safronov-btn" data-test-id="logout-button" onclick="logout()" style="margin-top: 10px; background-color: #dc3545;">
+            Разлогиниться
+        </button>
+        
+        <button class="safronov-btn" data-test-id="clear-tokens-button" onclick="clearAllTokens()" style="margin-top: 10px; background-color: #ffc107; color: #000;">
+            Очистить все токены
+        </button>
+    </div>
+    
+    <div class="footer" data-test-id="trainer-footer">Safronov_ID • Тренажер для AQA</div>
+
+    <script>
+        // Функция для проверки JWT Authentication
+        async function checkJwtAuth() {
+            try {
+                const jwtToken = localStorage.getItem('jwt_token');
+                
+                if (!jwtToken) {
+                    console.log('JWT токен не найден');
+                    return false;
+                }
+                
+                const response = await fetch('/auth/check-jwt', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${jwtToken}`
+                    }
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    console.log('JWT Authentication проверена:', result);
+                    return result.authenticated;
+                } else {
+                    console.log('JWT Authentication не найдена');
+                    return false;
+                }
+            } catch (error) {
+                console.error('Ошибка при проверке JWT Authentication:', error);
+                return false;
+            }
+        }
+
+        // Функция для получения JWT токена
+        async function requestJwtAuth() {
+            const username = prompt('Введите логин:');
+            const password = prompt('Введите пароль:');
+            
+            console.log('Попытка аутентификации для пользователя:', username);
+            
+            if (username && password) {
+                try {
+                    // Показываем сообщение о получении токена
+                    const authMessage = document.querySelector('.auth-message');
+                    authMessage.innerHTML = 'Получение токена...';
+                    authMessage.style.background = '#E3F2FD';
+                    authMessage.style.border = '1px solid #90CAF9';
+                    authMessage.style.color = '#1565C0';
+                    
+                    const requestBody = {
+                        username: username,
+                        password: password
+                    };
+                    
+                    console.log('Отправляем запрос на /auth/login:', requestBody);
+                    
+                    const headers = {
+                        'Content-Type': 'application/json'
+                    };
+                    
+                    const response = await fetch('/auth/login', {
+                        method: 'POST',
+                        headers: headers,
+                        body: JSON.stringify(requestBody)
+                    });
+                    
+                    console.log('Получен ответ:', response.status, response.statusText);
+                    
+                    if (response.ok) {
+                        const result = await response.json();
+                        localStorage.setItem('jwt_token', result.token);
+                        console.log('JWT токен получен:', result);
+                        
+                        // Показываем успешное сообщение
+                        authMessage.innerHTML = 'Токен успешно получен! Перезагружаем страницу...';
+                        authMessage.style.background = '#E8F5E8';
+                        authMessage.style.border = '1px solid #B3E6B3';
+                        authMessage.style.color = '#2E7D32';
+                        
+                        // Перезагружаем страницу через 2 секунды
+                        setTimeout(() => {
+                            location.reload();
+                        }, 2000);
+                    } else {
+                        const errorData = await response.json().catch(() => ({}));
+                        console.error('Ошибка аутентификации:', response.status, errorData);
+                        authMessage.innerHTML = `Ошибка аутентификации (${response.status}). Проверьте логин и пароль.`;
+                        authMessage.style.background = '#FFE8E8';
+                        authMessage.style.border = '1px solid #FFB3B3';
+                        authMessage.style.color = '#D32F2F';
+                    }
+                } catch (error) {
+                    console.error('Ошибка при получении JWT токена:', error);
+                    const authMessage = document.querySelector('.auth-message');
+                    authMessage.innerHTML = 'Ошибка при получении токена. Попробуйте еще раз.';
+                    authMessage.style.background = '#FFE8E8';
+                    authMessage.style.border = '1px solid #FFB3B3';
+                    authMessage.style.color = '#D32F2F';
+                }
+            }
+        }
+
+        // Функция для выхода из системы
+        async function logout() {
+            try {
+                // Показываем сообщение о выходе
+                const authMessage = document.querySelector('.auth-message');
+                authMessage.innerHTML = 'Выход из системы...';
+                authMessage.style.background = '#E3F2FD';
+                authMessage.style.border = '1px solid #90CAF9';
+                authMessage.style.color = '#1565C0';
+                
+                // Очищаем токены
+                await clearAuthTokens();
+                
+                // Показываем сообщение об успешном выходе
+                authMessage.innerHTML = 'Вы успешно вышли из системы. Для повторного входа нажмите "Получить JWT токен"';
+                authMessage.style.background = '#E8F5E8';
+                authMessage.style.border = '1px solid #B3E6B3';
+                authMessage.style.color = '#2E7D32';
+                
+                // Скрываем кнопки для аутентифицированного пользователя
+                const logoutButton = document.querySelector('[data-test-id="logout-button"]');
+                const clearTokensButton = document.querySelector('[data-test-id="clear-tokens-button"]');
+                logoutButton.style.display = 'none';
+                clearTokensButton.style.display = 'none';
+                
+                // Показываем кнопку входа
+                const authButton = document.querySelector('[data-test-id="auth-button"]');
+                authButton.style.display = 'block';
+                
+                console.log('Пользователь разлогинился');
+            } catch (error) {
+                console.error('Ошибка при выходе из системы:', error);
+                const authMessage = document.querySelector('.auth-message');
+                authMessage.innerHTML = 'Ошибка при выходе из системы. Попробуйте еще раз.';
+                authMessage.style.background = '#FFE8E8';
+                authMessage.style.border = '1px solid #FFB3B3';
+                authMessage.style.color = '#D32F2F';
+            }
+        }
+
+        // Функция для получения нового токена
+        async function getNewToken() {
+            try {
+                // Очищаем старые токены
+                await clearAuthTokens();
+                
+                // Показываем сообщение о получении нового токена
+                const authMessage = document.querySelector('.auth-message');
+                authMessage.innerHTML = 'Получение нового токена...';
+                authMessage.style.background = '#E3F2FD';
+                authMessage.style.border = '1px solid #90CAF9';
+                authMessage.style.color = '#1565C0';
+                
+                // Скрываем кнопки для аутентифицированного пользователя
+                const logoutButton = document.querySelector('[data-test-id="logout-button"]');
+                const clearTokensButton = document.querySelector('[data-test-id="clear-tokens-button"]');
+                logoutButton.style.display = 'none';
+                clearTokensButton.style.display = 'none';
+                
+                // Показываем кнопку входа
+                const authButton = document.querySelector('[data-test-id="auth-button"]');
+                authButton.style.display = 'block';
+                
+                console.log('Запрос на получение нового токена');
+            } catch (error) {
+                console.error('Ошибка при получении нового токена:', error);
+            }
+        }
+
+        // Функция для очистки авторизационных токенов
+        async function clearAuthTokens() {
+            try {
+                // Получаем текущий JWT токен из localStorage
+                const jwtToken = localStorage.getItem('jwt_token');
+                
+                // Подготавливаем заголовки для запроса
+                const headers = {
+                    'Content-Type': 'application/json'
+                };
+                
+                // Если есть JWT токен, добавляем его в заголовок
+                if (jwtToken) {
+                    headers['Authorization'] = `Bearer ${jwtToken}`;
+                }
+                
+                // Очищаем JWT токен из localStorage
+                localStorage.removeItem('jwt_token');
+                
+                // Очищаем Basic Auth из sessionStorage
+                sessionStorage.removeItem('basic_auth');
+                sessionStorage.removeItem('basic_auth_credentials');
+                
+                // Отправляем запрос на сервер для очистки токенов
+                const response = await fetch('/auth/logout', {
+                    method: 'POST',
+                    headers: headers
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    console.log('Авторизационные токены очищены:', result);
+                } else {
+                    console.error('Ошибка при очистке токенов на сервере');
+                }
+            } catch (error) {
+                console.error('Ошибка при очистке токенов:', error);
+            }
+        }
+
+        function goBack() {
+            // Очищаем токены перед возвратом
+            clearAuthTokens().then(() => {
+                // Проверяем, есть ли предыдущая страница в истории
+                if (document.referrer && document.referrer !== window.location.href) {
+                    window.history.back();
+                } else {
+                    // Если нет предыдущей страницы, переходим на главную
+                    window.location.href = '/';
+                }
+            });
+        }
+
+        // Функция для принудительной очистки всех токенов
+        function clearAllTokens() {
+            try {
+                // Очищаем все токены из localStorage и sessionStorage
+                localStorage.removeItem('jwt_token');
+                sessionStorage.removeItem('basic_auth');
+                sessionStorage.removeItem('basic_auth_credentials');
+                
+                // Показываем сообщение об очистке
+                const authMessage = document.querySelector('.auth-message');
+                authMessage.innerHTML = 'Все токены очищены. Для входа нажмите "Получить JWT токен"';
+                authMessage.style.background = '#FFF3E0';
+                authMessage.style.border = '1px solid #FFB74D';
+                authMessage.style.color = '#E65100';
+                
+                // Скрываем кнопки для аутентифицированного пользователя
+                const logoutButton = document.querySelector('[data-test-id="logout-button"]');
+                const clearTokensButton = document.querySelector('[data-test-id="clear-tokens-button"]');
+                logoutButton.style.display = 'none';
+                clearTokensButton.style.display = 'none';
+                
+                // Показываем кнопку входа
+                const authButton = document.querySelector('[data-test-id="auth-button"]');
+                authButton.style.display = 'block';
+                
+                console.log('Все токены принудительно очищены');
+            } catch (error) {
+                console.error('Ошибка при очистке токенов:', error);
+            }
+        }
+
+        // Добавляем обработчик для клавиши Escape
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                goBack();
+            }
+        });
+
+        // Функция для получения информации о токене из заголовка
+        async function getTokenInfo() {
+            try {
+                const localToken = localStorage.getItem('jwt_token');
+                
+                if (!localToken) {
+                    console.log('Токен не найден в localStorage');
+                    return null;
+                }
+                
+                const response = await fetch('/auth/token-info', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${localToken}`
+                    }
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    console.log('Информация о токене из localStorage:', result);
+                    return result;
+                } else {
+                    console.log('Не удалось получить информацию о токене - токен невалиден');
+                    // Очищаем невалидный токен
+                    localStorage.removeItem('jwt_token');
+                    return null;
+                }
+            } catch (error) {
+                console.error('Ошибка при получении информации о токене:', error);
+                // Очищаем невалидный токен при ошибке
+                localStorage.removeItem('jwt_token');
+                return null;
+            }
+        }
+
+        // Функция для проверки Bearer токена из заголовка
+        async function checkBearerFromHeader() {
+            try {
+                // Получаем токен из localStorage (если есть)
+                const localToken = localStorage.getItem('jwt_token');
+                
+                // Проверяем токен из localStorage
+                if (localToken) {
+                    const response = await fetch('/auth/check-bearer-header', {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': `Bearer ${localToken}`
+                        }
+                    });
+                    
+                    if (response.ok) {
+                        const result = await response.json();
+                        console.log('Bearer токен из localStorage проверен:', result);
+                        return result;
+                    } else {
+                        console.log('Bearer токен из localStorage невалиден - очищаем');
+                        localStorage.removeItem('jwt_token');
+                    }
+                }
+                
+                // Если токен не найден в localStorage, проверяем заголовок запроса
+                // Для этого отправляем запрос без токена, чтобы сервер проверил заголовок
+                const headerResponse = await fetch('/auth/check-bearer-header', {
+                    method: 'GET'
+                });
+                
+                if (headerResponse.ok) {
+                    const result = await headerResponse.json();
+                    console.log('Bearer токен из заголовка запроса проверен:', result);
+                    return result;
+                } else {
+                    console.log('Bearer токен не найден ни в localStorage, ни в заголовке');
+                    return null;
+                }
+            } catch (error) {
+                console.error('Ошибка при проверке Bearer токена:', error);
+                return null;
+            }
+        }
+
+        // Функция для отображения информации о токене
+        function displayTokenInfo(tokenInfo) {
+            const authMessage = document.querySelector('.auth-message');
+            authMessage.innerHTML = `
+                <div style="text-align: left;">
+                    <h4 style="margin: 0 0 10px 0; color: #2E7D32;">✅ Авторизация прошла успешно!</h4>
+                    <p><strong>Тип токена:</strong> ${tokenInfo.token_type}</p>
+                    <p><strong>Пользователь:</strong> ${tokenInfo.username}</p>
+                    <p><strong>Роль:</strong> ${tokenInfo.role}</p>
+                    <p><strong>Токен:</strong> ${tokenInfo.token_preview}</p>
+                    <p><strong>Длина токена:</strong> ${tokenInfo.token_length} символов</p>
+                    <p><strong>Статус:</strong> ${tokenInfo.message}</p>
+                </div>
+            `;
+            authMessage.style.background = '#E8F5E8';
+            authMessage.style.border = '1px solid #B3E6B3';
+            authMessage.style.color = '#2E7D32';
+        }
+
+        // Функция для отображения информации о Bearer токене
+        function displayBearerTokenInfo(bearerInfo) {
+            const authMessage = document.querySelector('.auth-message');
+            authMessage.innerHTML = `
+                <div style="text-align: left;">
+                    <h4 style="margin: 0 0 10px 0; color: #2E7D32;">✅ Bearer токен валиден!</h4>
+                    <p><strong>Тип токена:</strong> ${bearerInfo.token_type}</p>
+                    <p><strong>Пользователь:</strong> ${bearerInfo.username}</p>
+                    <p><strong>Роль:</strong> ${bearerInfo.role}</p>
+                    <p><strong>Токен:</strong> ${bearerInfo.token_preview}</p>
+                    <p><strong>Статус:</strong> ${bearerInfo.message}</p>
+                    <p><strong>Источник:</strong> Заголовок Authorization (Selenide)</p>
+                </div>
+            `;
+            authMessage.style.background = '#E8F5E8';
+            authMessage.style.border = '1px solid #B3E6B3';
+            authMessage.style.color = '#2E7D32';
+        }
+
+        // Анимация появления контента и проверка аутентификации
+        document.addEventListener('DOMContentLoaded', async function() {
+            console.log('Страница JWT аутентификации загружена');
+            
+            const container = document.querySelector('.safronov-container');
+            container.style.opacity = '0';
+            container.style.transform = 'translateY(20px)';
+            
+            // Проверяем наличие токена в localStorage
+            const localToken = localStorage.getItem('jwt_token');
+            
+            // Если есть токен, проверяем его валидность
+            if (localToken) {
+                try {
+                    const response = await fetch('/auth/check-jwt', {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': `Bearer ${localToken}`
+                        }
+                    });
+                    
+                    if (!response.ok) {
+                        console.log('Найден невалидный токен - очищаем');
+                        localStorage.removeItem('jwt_token');
+                    }
+                } catch (error) {
+                    console.log('Ошибка при проверке токена - очищаем');
+                    localStorage.removeItem('jwt_token');
+                }
+            }
+            
+            if (localToken) {
+                // Если есть токен в localStorage, получаем и отображаем информацию
+                const tokenInfo = await getTokenInfo();
+                if (tokenInfo) {
+                    displayTokenInfo(tokenInfo);
+                    
+                    // Скрываем кнопку входа
+                    const authButton = document.querySelector('[data-test-id="auth-button"]');
+                    authButton.style.display = 'none';
+                } else {
+                    // Если токен невалиден, показываем сообщение об ошибке
+                    const authMessage = document.querySelector('.auth-message');
+                    authMessage.innerHTML = 'Токен найден, но невалиден. Получите новый токен.';
+                    authMessage.style.background = '#FFF3E0';
+                    authMessage.style.border = '1px solid #FFB74D';
+                    authMessage.style.color = '#E65100';
+                    
+                    // Показываем кнопку входа и кнопку очистки токенов
+                    const authButton = document.querySelector('[data-test-id="auth-button"]');
+                    const clearTokensButton = document.querySelector('[data-test-id="clear-tokens-button"]');
+                    authButton.style.display = 'block';
+                    clearTokensButton.style.display = 'block';
+                    
+                    // Скрываем кнопку разлогиниться
+                    const logoutButton = document.querySelector('[data-test-id="logout-button"]');
+                    logoutButton.style.display = 'none';
+                    
+                    // Кнопка "Вернуться на главную" остается видимой
+                }
+                            } else {
+                    // Если токена нет в localStorage, проверяем Bearer токен из заголовка
+                    const bearerResult = await checkBearerFromHeader();
+                    
+                    if (bearerResult && bearerResult.authenticated) {
+                        // Если Bearer токен валиден, отображаем информацию
+                        displayBearerTokenInfo(bearerResult);
+                        
+                        // Скрываем кнопку входа
+                        const authButton = document.querySelector('[data-test-id="auth-button"]');
+                        authButton.style.display = 'none';
+                    } else {
+                        // Если нет токенов, показываем сообщение
+                        const authMessage = document.querySelector('.auth-message');
+                        authMessage.innerHTML = 'Для доступа к этой странице требуется JWT Authentication.<br>Нажмите кнопку "Получить JWT токен" и используйте логин: jwt, пароль: jwt';
+                        authMessage.style.background = '#FFE8E8';
+                        authMessage.style.border = '1px solid #FFB3B3';
+                        authMessage.style.color = '#D32F2F';
+                        
+                        // Скрываем только кнопку разлогиниться, но оставляем кнопку возврата на главную
+                        const logoutButton = document.querySelector('[data-test-id="logout-button"]');
+                        logoutButton.style.display = 'none';
+                    }
+                }
+            
+            setTimeout(() => {
+                container.style.transition = 'all 0.5s ease';
+                container.style.opacity = '1';
+                container.style.transform = 'translateY(0)';
+            }, 100);
+        });
+    </script>
+</body>
+</html> 
