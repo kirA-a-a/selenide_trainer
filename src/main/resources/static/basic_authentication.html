@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Basic Authentication - Safronov_ID</title>
+    <style>
+        /* Базовый стиль */
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #F5F7FA;
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 0;
+            color: #333;
+            position: relative;
+            padding-bottom: 60px;
+        }
+
+        /* Основной контейнер */
+        .safronov-container {
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            width: 100%;
+            max-width: 600px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            position: relative;
+            text-align: center;
+            margin: 32px 0 0 0;
+        }
+
+        /* Иконка курса */
+        .course-icon {
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 50px;
+            background: white;
+            border-radius: 50%;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            z-index: 2;
+            font-size: 0;
+        }
+
+        .course-icon::before,
+        .course-icon::after {
+            content: "";
+            position: absolute;
+            width: 20px;
+            height: 2px;
+            background: #4A90E2;
+            transition: all 0.3s ease;
+        }
+
+        .course-icon::before {
+            transform: rotate(45deg);
+        }
+
+        .course-icon::after {
+            transform: rotate(-45deg);
+        }
+
+        .course-icon:hover {
+            transform: translateX(-50%) scale(1.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .course-icon:hover::before {
+            transform: rotate(225deg);
+        }
+
+        .course-icon:hover::after {
+            transform: rotate(135deg);
+        }
+
+        /* Заголовок */
+        h1 {
+            color: #2C3E50;
+            font-size: 28px;
+            font-weight: 700;
+            margin: 0 0 20px 0;
+            text-align: center;
+        }
+
+        /* Сообщение об авторизации */
+        .auth-message {
+            background: #E8F4FD;
+            border: 1px solid #B3D9F2;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            color: #2C5AA0;
+            font-size: 18px;
+            font-weight: 500;
+            line-height: 1.6;
+        }
+
+        .auth-message::before {
+            content: "🔐";
+            display: block;
+            font-size: 32px;
+            margin-bottom: 12px;
+        }
+
+        /* Информационный блок */
+        .info-block {
+            background: #F8F9FA;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 16px 0;
+            border-left: 4px solid #4A90E2;
+            text-align: left;
+        }
+
+        .info-block h3 {
+            color: #2C3E50;
+            margin: 0 0 10px 0;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .info-block p {
+            margin: 8px 0;
+            color: #666;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        /* Кнопка */
+        .safronov-btn {
+            width: 100%;
+            padding: 14px;
+            background-color: #4A90E2;
+            color: white;
+            font-size: 18px;
+            font-weight: 600;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            margin-top: 20px;
+        }
+
+        .safronov-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(74, 144, 226, 0.25);
+        }
+
+        .safronov-btn::after {
+            content: "🔙";
+            position: absolute;
+            right: 28px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .safronov-btn:hover::after {
+            transform: translateY(-50%) rotate(10deg);
+        }
+
+        /* Футер */
+        .footer {
+            width: 100%;
+            text-align: center;
+            padding: 8px 0;
+            background: #F5F7FA;
+            color: #666;
+            font-size: 14px;
+            opacity: 0.9;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+        }
+
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .safronov-container {
+                margin: 16px;
+                padding: 24px;
+            }
+            
+            h1 {
+                font-size: 24px;
+            }
+            
+            .auth-message {
+                font-size: 16px;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="safronov-container" data-test-id="basic-auth-container">
+        <div class="course-icon" data-test-id="course-icon"></div>
+        
+        <h1 data-test-id="page-title">HTTP Basic Authentication</h1>
+        
+        <div class="auth-message" data-test-id="auth-message">
+            Вы авторизовались на странице с Basic авторизацией
+        </div>
+        
+        <div class="info-block" data-test-id="auth-info">
+            <h3>Информация об авторизации:</h3>
+            <p><strong>Тип:</strong> HTTP Basic Authentication</p>
+            <p><strong>Пользователь:</strong> basic</p>
+            <p><strong>Пароль:</strong> basic</p>
+            <p><strong>Роль:</strong> BASIC_USER</p>
+            <p><strong>Метод:</strong> Стандартная браузерная форма входа</p>
+            <p><strong>Очистка токенов:</strong> При возврате на главную все токены будут очищены</p>
+        </div>
+        
+
+        
+        <button class="safronov-btn" data-test-id="back-button" onclick="goBack()">
+            Вернуться на главную
+        </button>
+        
+        <button class="safronov-btn" data-test-id="auth-button" onclick="requestBasicAuth()" style="margin-top: 10px; background-color: #28a745;">
+            Войти в систему
+        </button>
+        
+        <button class="safronov-btn" data-test-id="logout-button" onclick="logout()" style="margin-top: 10px; background-color: #dc3545;">
+            Разлогиниться
+        </button>
+    </div>
+    
+    <div class="footer" data-test-id="trainer-footer">Safronov_ID • Тренажер для AQA</div>
+
+    <script>
+        // Функция для проверки Basic Authentication
+        async function checkBasicAuth() {
+            try {
+                // Проверяем, есть ли сохраненные учетные данные
+                const savedCredentials = sessionStorage.getItem('basic_auth_credentials');
+                
+                if (!savedCredentials) {
+                    console.log('Basic Authentication не найдена - нет сохраненных учетных данных');
+                    return false;
+                }
+                
+                const response = await fetch('/auth/check-basic', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Basic ${savedCredentials}`
+                    }
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    console.log('Basic Authentication проверена:', result);
+                    return result.authenticated;
+                } else {
+                    console.log('Basic Authentication не найдена');
+                    return false;
+                }
+            } catch (error) {
+                console.error('Ошибка при проверке Basic Authentication:', error);
+                return false;
+            }
+        }
+
+        // Функция для получения информации о Basic Authentication
+        async function getBasicAuthInfo() {
+            try {
+                const savedCredentials = sessionStorage.getItem('basic_auth_credentials');
+                
+                if (!savedCredentials) {
+                    return null;
+                }
+                
+                const response = await fetch('/auth/basic-info', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Basic ${savedCredentials}`
+                    }
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    console.log('Информация о Basic Authentication:', result);
+                    return result;
+                } else {
+                    console.log('Не удалось получить информацию о Basic Authentication');
+                    return null;
+                }
+            } catch (error) {
+                console.error('Ошибка при получении информации о Basic Authentication:', error);
+                return null;
+            }
+        }
+
+        // Функция для проверки Bearer токена из заголовка
+        async function checkBearerFromHeader() {
+            try {
+                // Получаем токен из localStorage (если есть)
+                const localToken = localStorage.getItem('jwt_token');
+                
+                // Проверяем токен из localStorage
+                if (localToken) {
+                    const response = await fetch('/auth/check-bearer-header', {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': `Bearer ${localToken}`
+                        }
+                    });
+                    
+                    if (response.ok) {
+                        const result = await response.json();
+                        console.log('Bearer токен из localStorage проверен:', result);
+                        return result;
+                    }
+                }
+                
+                // Если токен не найден в localStorage, проверяем заголовок запроса
+                // Для этого отправляем запрос без токена, чтобы сервер проверил заголовок
+                const headerResponse = await fetch('/auth/check-bearer-header', {
+                    method: 'GET'
+                });
+                
+                if (headerResponse.ok) {
+                    const result = await headerResponse.json();
+                    console.log('Bearer токен из заголовка запроса проверен:', result);
+                    return result;
+                } else {
+                    console.log('Bearer токен не найден ни в localStorage, ни в заголовке');
+                    return null;
+                }
+            } catch (error) {
+                console.error('Ошибка при проверке Bearer токена:', error);
+                return null;
+            }
+        }
+
+        // Функция для отображения информации о Basic Authentication
+        function displayBasicAuthInfo(authInfo) {
+            const authMessage = document.querySelector('.auth-message');
+            authMessage.innerHTML = `
+                <div style="text-align: left;">
+                    <h4 style="margin: 0 0 10px 0; color: #2E7D32;">✅ Авторизация прошла успешно!</h4>
+                    <p><strong>Тип авторизации:</strong> ${authInfo.auth_type}</p>
+                    <p><strong>Пользователь:</strong> ${authInfo.username}</p>
+                    <p><strong>Роль:</strong> ${authInfo.role}</p>
+                    <p><strong>Учетные данные:</strong> ${authInfo.credentials_preview}</p>
+                    <p><strong>Метод:</strong> ${authInfo.method}</p>
+                    <p><strong>Статус:</strong> ${authInfo.message}</p>
+                </div>
+            `;
+            authMessage.style.background = '#E8F5E8';
+            authMessage.style.border = '1px solid #B3E6B3';
+            authMessage.style.color = '#2E7D32';
+        }
+
+        // Функция для отображения информации о Bearer токене
+        function displayBearerTokenInfo(bearerInfo) {
+            const authMessage = document.querySelector('.auth-message');
+            authMessage.innerHTML = `
+                <div style="text-align: left;">
+                    <h4 style="margin: 0 0 10px 0; color: #2E7D32;">✅ Bearer токен валиден!</h4>
+                    <p><strong>Тип токена:</strong> ${bearerInfo.token_type}</p>
+                    <p><strong>Пользователь:</strong> ${bearerInfo.username}</p>
+                    <p><strong>Роль:</strong> ${bearerInfo.role}</p>
+                    <p><strong>Токен:</strong> ${bearerInfo.token_preview}</p>
+                    <p><strong>Статус:</strong> ${bearerInfo.message}</p>
+                    <p><strong>Источник:</strong> Заголовок Authorization (Selenide)</p>
+                </div>
+            `;
+            authMessage.style.background = '#E8F5E8';
+            authMessage.style.border = '1px solid #B3E6B3';
+            authMessage.style.color = '#2E7D32';
+        }
+
+        // Функция для запроса Basic Authentication
+        function requestBasicAuth() {
+            // Показываем стандартный диалог браузера для Basic Auth
+            const username = prompt('Введите логин:');
+            const password = prompt('Введите пароль:');
+            
+            if (username && password) {
+                // Кодируем учетные данные в base64
+                const credentials = btoa(`${username}:${password}`);
+                sessionStorage.setItem('basic_auth_credentials', credentials);
+                
+                // Перезагружаем страницу для применения аутентификации
+                location.reload();
+            }
+        }
+
+        // Функция для выхода из системы
+        async function logout() {
+            try {
+                // Очищаем токены
+                await clearAuthTokens();
+                
+                // Показываем сообщение об успешном выходе
+                const authMessage = document.querySelector('.auth-message');
+                authMessage.innerHTML = 'Вы успешно вышли из системы. Для повторного входа нажмите "Войти в систему"';
+                authMessage.style.background = '#E8F5E8';
+                authMessage.style.border = '1px solid #B3E6B3';
+                authMessage.style.color = '#2E7D32';
+                
+                // Скрываем только кнопку разлогиниться, но оставляем кнопку возврата на главную
+                const logoutButton = document.querySelector('[data-test-id="logout-button"]');
+                logoutButton.style.display = 'none';
+                
+                // Показываем кнопку входа
+                const authButton = document.querySelector('[data-test-id="auth-button"]');
+                authButton.style.display = 'block';
+                
+                console.log('Пользователь разлогинился');
+            } catch (error) {
+                console.error('Ошибка при выходе из системы:', error);
+            }
+        }
+
+        // Функция для очистки авторизационных токенов
+        async function clearAuthTokens() {
+            try {
+                // Получаем текущий JWT токен из localStorage
+                const jwtToken = localStorage.getItem('jwt_token');
+                
+                // Очищаем JWT токен из localStorage
+                localStorage.removeItem('jwt_token');
+                
+                // Очищаем Basic Auth из sessionStorage
+                sessionStorage.removeItem('basic_auth');
+                sessionStorage.removeItem('basic_auth_credentials');
+                
+                // Отправляем запрос на сервер для очистки JWT токенов
+                if (jwtToken) {
+                    const jwtHeaders = {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${jwtToken}`
+                    };
+                    
+                    const jwtResponse = await fetch('/auth/logout', {
+                        method: 'POST',
+                        headers: jwtHeaders
+                    });
+                    
+                    if (jwtResponse.ok) {
+                        const jwtResult = await jwtResponse.json();
+                        console.log('JWT токены очищены:', jwtResult);
+                    }
+                }
+                
+                // Отправляем запрос на сервер для очистки Basic Auth
+                const savedCredentials = sessionStorage.getItem('basic_auth_credentials');
+                if (savedCredentials) {
+                    const basicHeaders = {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Basic ${savedCredentials}`
+                    };
+                    
+                    const basicResponse = await fetch('/auth/logout-basic', {
+                        method: 'POST',
+                        headers: basicHeaders
+                    });
+                    
+                    if (basicResponse.ok) {
+                        const basicResult = await basicResponse.json();
+                        console.log('Basic Authentication очищена:', basicResult);
+                    }
+                }
+                
+                console.log('Все авторизационные токены очищены');
+            } catch (error) {
+                console.error('Ошибка при очистке токенов:', error);
+            }
+        }
+
+        function goBack() {
+            // Очищаем токены перед возвратом
+            clearAuthTokens().then(() => {
+                // Проверяем, есть ли предыдущая страница в истории
+                if (document.referrer && document.referrer !== window.location.href) {
+                    window.history.back();
+                } else {
+                    // Если нет предыдущей страницы, переходим на главную
+                    window.location.href = '/';
+                }
+            });
+        }
+
+        // Добавляем обработчик для клавиши Escape
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                goBack();
+            }
+        });
+
+        // Анимация появления контента и проверка аутентификации
+        document.addEventListener('DOMContentLoaded', async function() {
+            const container = document.querySelector('.safronov-container');
+            container.style.opacity = '0';
+            container.style.transform = 'translateY(20px)';
+            
+            // Сначала проверяем Bearer токен из заголовка (для Selenide)
+            const bearerResult = await checkBearerFromHeader();
+            
+            if (bearerResult && bearerResult.authenticated) {
+                // Если Bearer токен валиден, отображаем информацию
+                displayBearerTokenInfo(bearerResult);
+                
+                // Скрываем кнопку входа
+                const authButton = document.querySelector('[data-test-id="auth-button"]');
+                authButton.style.display = 'none';
+            } else {
+                // Проверяем обычную Basic Authentication
+                const isAuthenticated = await checkBasicAuth();
+                
+                if (isAuthenticated) {
+                    // Если аутентифицированы, получаем и отображаем информацию о токене
+                    const authInfo = await getBasicAuthInfo();
+                    if (authInfo) {
+                        displayBasicAuthInfo(authInfo);
+                    }
+                    
+                    // Скрываем кнопку входа
+                    const authButton = document.querySelector('[data-test-id="auth-button"]');
+                    authButton.style.display = 'none';
+                } else {
+                    // Если не аутентифицированы, показываем сообщение
+                    const authMessage = document.querySelector('.auth-message');
+                    authMessage.innerHTML = 'Для доступа к этой странице требуется Basic Authentication.<br>Нажмите кнопку "Войти в систему" и используйте логин: basic, пароль: basic';
+                    authMessage.style.background = '#FFE8E8';
+                    authMessage.style.border = '1px solid #FFB3B3';
+                    authMessage.style.color = '#D32F2F';
+                    
+                    // Скрываем только кнопку разлогиниться, но оставляем кнопку возврата на главную
+                    const logoutButton = document.querySelector('[data-test-id="logout-button"]');
+                    logoutButton.style.display = 'none';
+                }
+            }
+            
+            setTimeout(() => {
+                container.style.transition = 'all 0.5s ease';
+                container.style.opacity = '1';
+                container.style.transform = 'translateY(0)';
+            }, 100);
+        });
+    </script>
+</body>
+</html> 
