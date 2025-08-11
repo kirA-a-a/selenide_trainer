@@ -18,6 +18,7 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.servlet.http.HttpServletResponse;
 
 @Configuration
 @EnableWebSecurity
@@ -30,14 +31,28 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests(authz -> authz
+                // Разрешаем статику
                 .requestMatchers("/static/**", "/css/**", "/js/**", "/images/**").permitAll()
+                
+                // Страницы доступны всем
+                .requestMatchers("/jwt_authentication.html", "/index.html", "/").permitAll()
+                
+                // Требуем Basic авторизацию для страницы basic_authentication.html
+                .requestMatchers("/basic_authentication.html").authenticated()
+                
+                // Все auth эндпоинты доступны всем (проверка аутентификации происходит внутри них)
                 .requestMatchers("/auth/**").permitAll()
-                .requestMatchers("/basic_authentication.html", "/jwt_authentication.html", "/index.html", "/").permitAll()
                 .requestMatchers("/api/basic/**").hasRole("BASIC_USER")
                 .requestMatchers("/api/jwt/**").hasRole("JWT_USER")
                 .anyRequest().permitAll()
             )
-            .httpBasic(basic -> {})
+            .httpBasic(basic -> basic
+                .authenticationEntryPoint((request, response, authException) -> {
+                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    response.setHeader("WWW-Authenticate", "Basic realm=\"Basic Authentication Required\"");
+                    response.getWriter().write("Authentication required");
+                })
+            )
             .csrf(csrf -> csrf.disable())
             .sessionManagement(session -> session
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
