@@ -235,6 +235,10 @@
         <button class="safronov-btn" data-test-id="logout-button" onclick="logout()" style="margin-top: 10px; background-color: #dc3545;">
             Разлогиниться
         </button>
+        
+        <button class="safronov-btn" data-test-id="test-basic-auth" onclick="testBasicAuth()" style="margin-top: 10px; background-color: #28a745;">
+            Тестировать Basic Auth
+        </button>
     </div>
     
     <div class="footer" data-test-id="trainer-footer">Safronov_ID • Тренажер для AQA</div>
@@ -397,7 +401,97 @@
             authMessage.style.color = '#2E7D32';
         }
 
-
+        // Функция для тестирования Basic Authentication
+        async function testBasicAuth() {
+            try {
+                // Получаем сохраненные учетные данные
+                let savedCredentials = sessionStorage.getItem('basic_auth_credentials');
+                if (!savedCredentials) {
+                    const cookieMatch = document.cookie.match(/(?:^|; )basic_auth_credentials=([^;]+)/);
+                    if (cookieMatch) {
+                        savedCredentials = decodeURIComponent(cookieMatch[1]);
+                        sessionStorage.setItem('basic_auth_credentials', savedCredentials);
+                    }
+                }
+                
+                if (!savedCredentials) {
+                    // Если нет сохраненных учетных данных, показываем сообщение
+                    const authMessage = document.querySelector('.auth-message');
+                    authMessage.innerHTML = `
+                        <div style="text-align: left;">
+                            <h4 style="margin: 0 0 10px 0; color: #f39c12;">⚠️ Учетные данные не найдены</h4>
+                            <p>Для тестирования Basic Authentication необходимо сначала авторизоваться.</p>
+                            <p><strong>Логин:</strong> basic</p>
+                            <p><strong>Пароль:</strong> basic</p>
+                            <p>Используйте браузерную форму входа или обновите страницу с учетными данными в URL.</p>
+                        </div>
+                    `;
+                    authMessage.style.background = '#FFF3CD';
+                    authMessage.style.border = '1px solid #FFEAA7';
+                    authMessage.style.color = '#856404';
+                    return;
+                }
+                
+                // Тестируем Basic Authentication через защищенный эндпоинт
+                const response = await fetch('/api/basic/test', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Basic ${savedCredentials}`
+                    }
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    
+                    // Отображаем результат тестирования
+                    const authMessage = document.querySelector('.auth-message');
+                    authMessage.innerHTML = `
+                        <div style="text-align: left;">
+                            <h4 style="margin: 0 0 10px 0; color: #28a745;">✅ Basic Authentication работает!</h4>
+                            <p><strong>Статус:</strong> ${result.message}</p>
+                            <p><strong>Пользователь:</strong> ${result.username}</p>
+                            <p><strong>Роли:</strong> ${result.authorities}</p>
+                            <p><strong>Время:</strong> ${result.timestamp}</p>
+                            <p><strong>Аутентифицирован:</strong> ${result.authenticated ? 'Да' : 'Нет'}</p>
+                        </div>
+                    `;
+                    authMessage.style.background = '#D4EDDA';
+                    authMessage.style.border = '1px solid #C3E6CB';
+                    authMessage.style.color = '#155724';
+                    
+                    console.log('Basic Authentication тест успешен:', result);
+                } else {
+                    // Если тест не прошел
+                    const authMessage = document.querySelector('.auth-message');
+                    authMessage.innerHTML = `
+                        <div style="text-align: left;">
+                            <h4 style="margin: 0 0 10px 0; color: #dc3545;">❌ Basic Authentication не работает</h4>
+                            <p><strong>Статус:</strong> ${response.status} ${response.statusText}</p>
+                            <p>Проверьте учетные данные или попробуйте авторизоваться заново.</p>
+                        </div>
+                    `;
+                    authMessage.style.background = '#F8D7DA';
+                    authMessage.style.border = '1px solid #F5C6CB';
+                    authMessage.style.color = '#721C24';
+                    
+                    console.log('Basic Authentication тест не прошел:', response.status, response.statusText);
+                }
+            } catch (error) {
+                console.error('Ошибка при тестировании Basic Authentication:', error);
+                
+                const authMessage = document.querySelector('.auth-message');
+                authMessage.innerHTML = `
+                    <div style="text-align: left;">
+                        <h4 style="margin: 0 0 10px 0; color: #dc3545;">❌ Ошибка при тестировании</h4>
+                        <p><strong>Ошибка:</strong> ${error.message}</p>
+                        <p>Проверьте консоль браузера для дополнительной информации.</p>
+                    </div>
+                `;
+                authMessage.style.background = '#F8D7DA';
+                authMessage.style.border = '1px solid #F5C6CB';
+                authMessage.style.color = '#721C24';
+            }
+        }
 
         // Функция для выхода из системы
         async function logout() {
@@ -510,23 +604,42 @@
             
             // Для Selenide: если URL содержит логин/пароль, сохраняем их
             try {
-                // Selenide передаёт креды через URL, попробуем их извлечь из текущего контекста
-                // Проверяем, авторизован ли пользователь через Basic Auth,
-                // делая запрос к защищённому эндпоинту
-                const testResponse = await fetch('/api/basic/test', {
-                    method: 'GET',
-                    credentials: 'same-origin'
-                });
+                // Проверяем, есть ли сохраненные учетные данные Basic Auth
+                let savedCredentials = sessionStorage.getItem('basic_auth_credentials');
+                if (!savedCredentials) {
+                    const cookieMatch = document.cookie.match(/(?:^|; )basic_auth_credentials=([^;]+)/);
+                    if (cookieMatch) {
+                        savedCredentials = decodeURIComponent(cookieMatch[1]);
+                        sessionStorage.setItem('basic_auth_credentials', savedCredentials);
+                    }
+                }
                 
-                if (testResponse.ok) {
-                    // Если запрос успешен, значит браузер уже авторизован через Basic Auth
-                    // Сохраняем креды для дальнейшего использования
-                    const base64Creds = btoa('basic:basic');
-                    sessionStorage.setItem('basic_auth_credentials', base64Creds);
-                    console.log('Detected active Basic Auth session, credentials saved');
+                // Если есть сохраненные учетные данные, проверяем их через защищенный эндпоинт
+                if (savedCredentials) {
+                    try {
+                        const testResponse = await fetch('/api/basic/test', {
+                            method: 'GET',
+                            headers: {
+                                'Authorization': `Basic ${savedCredentials}`
+                            }
+                        });
+                        
+                        if (testResponse.ok) {
+                            // Если запрос успешен, значит Basic Auth работает
+                            console.log('Basic Authentication активна, учетные данные сохранены');
+                        } else {
+                            // Если запрос не прошел, очищаем невалидные учетные данные
+                            console.log('Basic Authentication невалидна, очищаем учетные данные');
+                            sessionStorage.removeItem('basic_auth_credentials');
+                            savedCredentials = null;
+                        }
+                    } catch (error) {
+                        console.log('Ошибка при проверке Basic Authentication:', error);
+                        savedCredentials = null;
+                    }
                 }
             } catch (error) {
-                console.log('No active Basic Auth session detected');
+                console.log('Ошибка при инициализации Basic Authentication:', error);
             }
             
             // Сначала проверяем Bearer токен из заголовка (для Selenide)
@@ -538,7 +651,9 @@
                 
                 // Скрываем кнопку входа
                 const authButton = document.querySelector('[data-test-id="auth-button"]');
-                authButton.style.display = 'none';
+                if (authButton) {
+                    authButton.style.display = 'none';
+                }
             } else {
                 // Проверяем обычную Basic Authentication
                 const isAuthenticated = await checkBasicAuth();
@@ -552,14 +667,17 @@
                     
                     // Скрываем кнопку входа
                     const authButton = document.querySelector('[data-test-id="auth-button"]');
-                    authButton.style.display = 'none';
+                    if (authButton) {
+                        authButton.style.display = 'none';
+                    }
                 } else {
                     // Если не аутентифицированы, показываем приветственное сообщение
                     const authMessage = document.querySelector('.auth-message');
                     authMessage.innerHTML = `
                         🎉 Добро пожаловать на страницу Basic Authentication!<br>
-                        Вы успешно авторизовались с помощью HTTP Basic авторизации<br>
-                        <small style="color: #666; font-size: 14px;">Логин: basic, Пароль: basic</small>
+                        Для доступа к защищенным ресурсам используйте HTTP Basic Authentication<br>
+                        <small style="color: #666; font-size: 14px;">Логин: basic, Пароль: basic</small><br>
+                        <small style="color: #666; font-size: 14px;">Или используйте браузерную форму входа</small>
                     `;
                     authMessage.style.background = '#E8F5E8';
                     authMessage.style.border = '1px solid #B3E6B3';
@@ -567,7 +685,9 @@
                     
                     // Скрываем только кнопку разлогиниться, но оставляем кнопку возврата на главную
                     const logoutButton = document.querySelector('[data-test-id="logout-button"]');
-                    logoutButton.style.display = 'none';
+                    if (logoutButton) {
+                        logoutButton.style.display = 'none';
+                    }
                 }
             }
             

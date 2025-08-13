@@ -32,12 +32,31 @@ public class BasicCredentialsCaptureFilter extends OncePerRequestFilter {
     protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain)
             throws ServletException, IOException {
 
+        String uri = request.getRequestURI();
+        String method = request.getMethod();
+        String userAgent = request.getHeader("User-Agent");
+        String authHeader = request.getHeader("Authorization");
+        
+        log.info("=== BasicCredentialsCaptureFilter ===");
+        log.info("URI: {}", uri);
+        log.info("Method: {}", method);
+        log.info("User-Agent: {}", userAgent);
+        log.info("Authorization header: {}", authHeader);
+        log.info("Request headers:");
+        java.util.Enumeration<String> headerNames = request.getHeaderNames();
+        while (headerNames.hasMoreElements()) {
+            String headerName = headerNames.nextElement();
+            String headerValue = request.getHeader(headerName);
+            log.info("  {}: {}", headerName, headerValue);
+        }
+
         try {
-            String uri = request.getRequestURI();
             if (uri != null && uri.endsWith("/basic_authentication.html")) {
-                String authHeader = request.getHeader("Authorization");
+                log.info("Обрабатывается запрос к basic_authentication.html");
+                
                 if (authHeader != null && authHeader.startsWith(BASIC_PREFIX)) {
                     String base64Creds = authHeader.substring(BASIC_PREFIX.length());
+                    log.info("Найден Basic Auth заголовок, креды: {}", base64Creds);
 
                     // Сохраняем в cookie, доступную JS (HttpOnly = false)
                     Cookie cookie = new Cookie(COOKIE_NAME, base64Creds);
@@ -46,13 +65,18 @@ public class BasicCredentialsCaptureFilter extends OncePerRequestFilter {
                     cookie.setHttpOnly(false);
                     cookie.setSecure(false);
                     response.addCookie(cookie);
-                    log.debug("Saved Basic credentials to cookie for basic_authentication.html");
+                    log.info("Basic credentials сохранены в cookie: {}", COOKIE_NAME);
+                } else {
+                    log.info("Basic Auth заголовок не найден или неверный формат");
                 }
+            } else {
+                log.info("URI {} не соответствует basic_authentication.html, пропускаем", uri);
             }
         } catch (Exception e) {
-            log.warn("Failed to capture Basic credentials: {}", e.getMessage());
+            log.error("Ошибка в BasicCredentialsCaptureFilter: {}", e.getMessage(), e);
         }
 
+        log.info("Передаем управление следующему фильтру");
         filterChain.doFilter(request, response);
     }
 }

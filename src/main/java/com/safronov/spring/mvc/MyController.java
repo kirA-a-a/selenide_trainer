@@ -4,11 +4,17 @@ import com.safronov.spring.mvc.untitled.entity.Employee;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Контроллер для обработки запросов, связанных с информацией о сотрудниках
@@ -59,5 +65,23 @@ public class MyController {
     public String showBasicAuthPage() {
         log.info("Перенаправление на страницу с Basic авторизацией");
         return "redirect:/basic_authentication.html";
+    }
+    
+    /**
+     * Обрабатывает запрос к странице Basic Authentication
+     * Читает содержимое HTML файла и возвращает его как ответ
+     */
+    @GetMapping(value = "/basic_authentication.html", produces = MediaType.TEXT_HTML_VALUE)
+    @ResponseBody
+    public String showBasicAuthPageDirect() {
+        log.info("Отображение страницы Basic Authentication");
+        try {
+            ClassPathResource resource = new ClassPathResource("static/basic_authentication.html");
+            byte[] bytes = resource.getInputStream().readAllBytes();
+            return new String(bytes, StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            log.error("Ошибка при чтении файла basic_authentication.html", e);
+            return "<html><body><h1>Ошибка загрузки страницы</h1><p>" + e.getMessage() + "</p></body></html>";
+        }
     }
 }
