@@ -19,38 +19,58 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import jakarta.servlet.http.HttpServletResponse;
+import com.safronov.spring.mvc.BasicCredentialsCaptureFilter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+
+    private static final Logger log = LoggerFactory.getLogger(SecurityConfig.class);
 
     @Autowired
     private JwtUtils jwtUtils;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        log.info("Настройка SecurityFilterChain...");
+        
         http
             .authorizeHttpRequests(authz -> authz
-                // Разрешаем статику
-                .requestMatchers("/static/**", "/css/**", "/js/**", "/images/**").permitAll()
+                // Главная страница доступна всем
+                .requestMatchers("/", "/basic-auth", "/askDetails", "/showDetails").permitAll()
                 
-                // Страницы доступны всем
-                .requestMatchers("/jwt_authentication.html", "/index.html", "/").permitAll()
+                // Статические ресурсы доступны всем
+                .requestMatchers("/index.html", "/jwt_authentication.html", "/askDetails.html", "/showDetails.html").permitAll()
                 
-                // Требуем Basic авторизацию для страницы basic_authentication.html
-                .requestMatchers("/basic_authentication.html").authenticated()
-                
-                // Все auth эндпоинты доступны всем (проверка аутентификации происходит внутри них)
+                // Все auth эндпоинты доступны всем
                 .requestMatchers("/auth/**").permitAll()
+                
+                // Basic Auth страница требует роль BASIC_USER (обрабатывается контроллером)
+                .requestMatchers("/basic_authentication.html").hasRole("BASIC_USER")
+                
+                // API эндпоинты требуют соответствующую роль
                 .requestMatchers("/api/basic/**").hasRole("BASIC_USER")
                 .requestMatchers("/api/jwt/**").hasRole("JWT_USER")
-                .anyRequest().permitAll()
+                
+                // Все остальные запросы требуют аутентификации
+                .anyRequest().authenticated()
             )
+            // Включаем HTTP Basic Authentication
             .httpBasic(basic -> basic
+                .realmName("Safronov_ID Basic Auth")
                 .authenticationEntryPoint((request, response, authException) -> {
+                    log.info("Запрос требует аутентификации: {} {}", request.getMethod(), request.getRequestURI());
+                    log.info("User-Agent: {}", request.getHeader("User-Agent"));
+                    log.info("Authorization header: {}", request.getHeader("Authorization"));
+                    
                     response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                    response.setHeader("WWW-Authenticate", "Basic realm=\"Basic Authentication Required\"");
-                    response.getWriter().write("Authentication required");
+                    response.setHeader("WWW-Authenticate", "Basic realm=\"Safronov_ID Basic Auth\"");
+                    response.setContentType("application/json;charset=UTF-8");
+                    response.getWriter().write("{\"error\":\"Unauthorized\",\"message\":\"Basic Authentication required\"}");
+                    
+                    log.info("Отправлен ответ 401 с заголовком WWW-Authenticate");
                 })
             )
             .csrf(csrf -> csrf.disable())
@@ -58,31 +78,43 @@ public class SecurityConfig {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
             .authenticationProvider(authenticationProvider())
-            .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+            .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
+            .addFilterBefore(new BasicCredentialsCaptureFilter(), UsernamePasswordAuthenticationFilter.class);
         
+        log.info("SecurityFilterChain настроен");
         return http.build();
     }
 
     @Bean
     public AuthenticationProvider authenticationProvider() {
+        log.info("Создание AuthenticationProvider...");
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
         authProvider.setUserDetailsService(userDetailsService());
         authProvider.setPasswordEncoder(passwordEncoder());
+        log.info("AuthenticationProvider создан");
         return authProvider;
     }
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
-        return config.getAuthenticationManager();
+        log.info("Создание AuthenticationManager...");
+        AuthenticationManager manager = config.getAuthenticationManager();
+        log.info("AuthenticationManager создан");
+        return manager;
     }
 
     @Bean
     public JwtAuthenticationFilter jwtAuthenticationFilter() {
-        return new JwtAuthenticationFilter(jwtUtils, userDetailsService());
+        log.info("Создание JwtAuthenticationFilter...");
+        JwtAuthenticationFilter filter = new JwtAuthenticationFilter(jwtUtils, userDetailsService());
+        log.info("JwtAuthenticationFilter создан");
+        return filter;
     }
 
     @Bean
     public UserDetailsService userDetailsService() {
+        log.info("Создание UserDetailsService...");
+        
         UserDetails basicUser = User.builder()
             .username("basic")
             .password(passwordEncoder().encode("basic"))
@@ -95,11 +127,15 @@ public class SecurityConfig {
             .roles("JWT_USER")
             .build();
 
+        log.info("Создан пользователь basic с ролью BASIC_USER");
+        log.info("Создан пользователь jwt с ролью JWT_USER");
+        
         return new InMemoryUserDetailsManager(basicUser, jwtUser);
     }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
+        log.info("Создание PasswordEncoder (BCrypt)...");
         return new BCryptPasswordEncoder();
     }
 } 
