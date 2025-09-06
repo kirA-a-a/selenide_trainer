@@ -38,11 +38,23 @@ public class SecurityConfig {
         
         http
             .authorizeHttpRequests(authz -> authz
+                // Разрешаем все HTML файлы в корне (самое первое правило!)
+                .requestMatchers("/*.html").permitAll()
+                
+                // Явно разрешаем text_input.html
+                .requestMatchers("/text_input.html").permitAll()
+                
+                // Разрешаем все статические ресурсы в корне
+                .requestMatchers("/static/**", "/css/**", "/js/**", "/images/**").permitAll()
+                
                 // Главная страница доступна всем
                 .requestMatchers("/", "/basic-auth", "/askDetails", "/showDetails").permitAll()
                 
                 // Статические ресурсы доступны всем
-                .requestMatchers("/index.html", "/jwt_authentication.html", "/askDetails.html", "/showDetails.html").permitAll()
+                .requestMatchers("/index.html", "/jwt_authentication.html", "/askDetails.html", "/showDetails.html", "/text_input.html").permitAll()
+                
+                // Разрешаем все запросы к корню
+                .requestMatchers("/").permitAll()
                 
                 // Все auth эндпоинты доступны всем
                 .requestMatchers("/auth/**").permitAll()
