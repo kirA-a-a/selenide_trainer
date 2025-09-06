@@ -51,7 +51,7 @@ public class SecurityConfig {
                 .requestMatchers("/", "/basic-auth", "/askDetails", "/showDetails").permitAll()
                 
                 // Статические ресурсы доступны всем
-                .requestMatchers("/index.html", "/jwt_authentication.html", "/askDetails.html", "/showDetails.html", "/text_input.html").permitAll()
+                .requestMatchers("/index.html", "/jwt_authentication.html", "/askDetails.html", "/showDetails.html", "/localstorage_training.html", "/sessionstorage_training.html").permitAll()
                 
                 // Разрешаем все запросы к корню
                 .requestMatchers("/").permitAll()
