@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Текстовое поле</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* Базовый стиль */
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            color: #333;
+            position: relative;
+            padding-bottom: 60px;
+        }
+
+        /* Контейнер */
+        .text-input-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            width: 100%;
+            max-width: 600px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            position: relative;
+            margin: 32px 0 0 0;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* Иконка */
+        .text-input-container::before {
+            content: "✏️";
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 50px;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 8px 16px;
+            border-radius: 50%;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Заголовок */
+        .text-input-container h2 {
+            color: #333;
+            text-align: center;
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 32px;
+            letter-spacing: 0.8px;
+            position: relative;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .text-input-container h2::after {
+            content: "";
+            display: block;
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 16px auto 0;
+            border-radius: 2px;
+        }
+
+        /* Текстовое поле */
+        .text-input-field {
+            width: 100%;
+            min-height: 120px;
+            padding: 20px;
+            border: 2px solid rgba(102, 126, 234, 0.3);
+            border-radius: 12px;
+            font-family: 'Inter', sans-serif;
+            font-size: 16px;
+            line-height: 1.6;
+            resize: vertical;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+            box-sizing: border-box;
+        }
+
+        .text-input-field:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            background: rgba(255, 255, 255, 1);
+        }
+
+        .text-input-field::placeholder {
+            color: #999;
+            font-style: italic;
+        }
+
+        /* Кнопка назад */
+        .back-button {
+            display: inline-block;
+            margin-top: 24px;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .back-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Футер */
+        .footer {
+            width: 100%;
+            text-align: center;
+            padding: 12px 0;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            color: white;
+            font-size: 14px;
+            opacity: 0.9;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+        }
+    </style>
+</head>
+<body>
+<div class="text-input-container" data-test-id="text-input-container">
+    <h2 data-test-id="text-input-title">Текстовое поле для ввода</h2>
+    
+    <textarea 
+        class="text-input-field" 
+        placeholder="Введите любой текст здесь..."
+        data-test-id="text-input-field"
+        rows="6"
+    ></textarea>
+    
+    <div style="text-align: center;">
+        <a href="/index.html" class="back-button" data-test-id="back-to-main-link">
+            ← Вернуться на главную
+        </a>
+    </div>
+</div>
+
+<div class="footer" data-test-id="trainer-footer">Safronov_ID • Тренажер для AQA</div>
+
+<script>
+    // Функция для очистки всех авторизационных токенов при загрузке страницы
+    function clearAllAuthTokens() {
+        try {
+            // Очищаем JWT токен из localStorage
+            localStorage.removeItem('jwt_token');
+            
+            // Очищаем Basic Auth из sessionStorage
+            sessionStorage.removeItem('basic_auth');
+            sessionStorage.removeItem('basic_auth_credentials');
+            
+            console.log('Все авторизационные токены очищены на странице текстового поля');
+        } catch (error) {
+            console.error('Ошибка при очистке токенов на странице текстового поля:', error);
+        }
+    }
+
+    // Очищаем токены при загрузке страницы
+    document.addEventListener('DOMContentLoaded', function() {
+        clearAllAuthTokens();
+    });
+</script>
+</body>
+</html>
