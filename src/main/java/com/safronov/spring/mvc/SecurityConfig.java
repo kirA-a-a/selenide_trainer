@@ -42,7 +42,7 @@ public class SecurityConfig {
                 .requestMatchers("/", "/basic-auth", "/askDetails", "/showDetails").permitAll()
                 
                 // Статические ресурсы доступны всем
-                .requestMatchers("/index.html", "/jwt_authentication.html", "/askDetails.html", "/showDetails.html").permitAll()
+                .requestMatchers("/index.html", "/jwt_authentication.html", "/askDetails.html", "/showDetails.html", "/localstorage_training.html", "/sessionstorage_training.html").permitAll()
                 
                 // Все auth эндпоинты доступны всем
                 .requestMatchers("/auth/**").permitAll()
