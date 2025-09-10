@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cookies Training - Selenide & Autotesting</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* Базовый стиль */
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            color: #333;
+            position: relative;
+            padding-bottom: 60px;
+        }
+
+        /* Контейнер */
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            width: 100%;
+            max-width: 800px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            position: relative;
+            margin: 32px 0 0 0;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* Иконка */
+        .container::before {
+            content: "🍪";
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 50px;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 8px 16px;
+            border-radius: 50%;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Заголовок */
+        h1 {
+            color: #333;
+            text-align: center;
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 32px;
+            letter-spacing: 0.8px;
+            position: relative;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        h1::after {
+            content: "";
+            display: block;
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 16px auto 0;
+            border-radius: 2px;
+        }
+
+        /* Стили таблицы */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 24px;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        th, td {
+            padding: 20px;
+            text-align: left;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        th {
+            color: #333;
+            font-weight: 600;
+            background: rgba(102, 126, 234, 0.1);
+            font-size: 16px;
+        }
+
+        td {
+            font-size: 16px;
+            line-height: 1.5;
+            word-break: break-all;
+        }
+
+        /* Стили для кнопок */
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            margin: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #51cf66 0%, #40c057 100%);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #ffd43b 0%, #fab005 100%);
+            color: #333;
+        }
+
+        /* Стили для формы добавления */
+        .add-form {
+            background: rgba(102, 126, 234, 0.05);
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid rgba(102, 126, 234, 0.2);
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        /* Стили для строк таблицы */
+        tr {
+            transition: all 0.3s ease;
+        }
+
+        tr:hover {
+            background: rgba(102, 126, 234, 0.05);
+            transform: translateX(5px);
+        }
+
+        /* Кнопка возврата */
+        .back-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        /* Футер */
+        .footer {
+            width: 100%;
+            text-align: center;
+            padding: 12px 0;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            color: white;
+            font-size: 14px;
+            opacity: 0.9;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* Стили для сообщений */
+        .message {
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-weight: 600;
+        }
+
+        .message.success {
+            background: rgba(81, 207, 102, 0.1);
+            color: #2b8a3e;
+            border: 1px solid rgba(81, 207, 102, 0.3);
+        }
+
+        .message.error {
+            background: rgba(255, 107, 107, 0.1);
+            color: #c92a2a;
+            border: 1px solid rgba(255, 107, 107, 0.3);
+        }
+
+        .message.info {
+            background: rgba(102, 126, 234, 0.1);
+            color: #364fc7;
+            border: 1px solid rgba(102, 126, 234, 0.3);
+        }
+
+        /* Информационная панель */
+        .info-panel {
+            background: rgba(102, 126, 234, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #667eea;
+        }
+
+        .info-panel h4 {
+            margin: 0 0 10px 0;
+            color: #333;
+            font-size: 16px;
+        }
+
+        .info-panel p {
+            margin: 5px 0;
+            color: #666;
+            font-size: 14px;
+        }
+    </style>
+    <script>
+        // Утилиты для работы с куками
+        function setCookie(name, value, days) {
+            try {
+                const expires = days ? "; expires=" + new Date(Date.now() + days * 864e5).toUTCString() : "";
+                document.cookie = encodeURIComponent(name) + "=" + encodeURIComponent(value) + expires + "; path=/";
+                return true;
+            } catch (e) {
+                return false;
+            }
+        }
+
+        function getCookie(name) {
+            const cookies = document.cookie ? document.cookie.split('; ') : [];
+            for (let i = 0; i < cookies.length; i++) {
+                const parts = cookies[i].split('=');
+                const key = decodeURIComponent(parts[0]);
+                if (key === name) {
+                    return decodeURIComponent(parts.slice(1).join('='));
+                }
+            }
+            return null;
+        }
+
+        function getAllCookies() {
+            if (!document.cookie) return [];
+            return document.cookie.split('; ').map(pair => {
+                const idx = pair.indexOf('=');
+                const key = decodeURIComponent(pair.substring(0, idx));
+                const value = decodeURIComponent(pair.substring(idx + 1));
+                return { key, value };
+            });
+        }
+
+        function deleteCookie(name) {
+            document.cookie = encodeURIComponent(name) + "=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/";
+        }
+    </script>
+</head>
+<body>
+    <a href="/index.html" class="back-btn" data-test-id="back-to-main">← Назад</a>
+
+    <div class="container" data-test-id="cookies-container">
+        <h1 data-test-id="page-title">Cookies Training - Selenide & Autotesting</h1>
+
+        <div class="info-panel" data-test-id="info-panel">
+            <h4>ℹ️ Информация о Cookies</h4>
+            <p><strong>Cookies</strong> — это небольшие данные, которые сайт хранит в браузере.</p>
+            <p>Можно задавать время жизни куки, путь и домен. HttpOnly/Secure задаются только с сервера.</p>
+            <p>Подходит для практики чтения/записи и удаления cookie в автотестах.</p>
+        </div>
+
+        <div class="add-form" data-test-id="add-form">
+            <h3>Добавить новую cookie</h3>
+            <div class="form-group">
+                <label for="cookieKeyInput">Ключ:</label>
+                <input type="text" id="cookieKeyInput" placeholder="Введите имя cookie" data-test-id="key-input">
+            </div>
+            <div class="form-group">
+                <label for="cookieValueInput">Значение:</label>
+                <input type="text" id="cookieValueInput" placeholder="Введите значение" data-test-id="value-input">
+            </div>
+            <div class="form-group">
+                <label for="cookieDaysInput">Срок (дней, опционально):</label>
+                <input type="number" min="0" id="cookieDaysInput" placeholder="Напр. 7">
+            </div>
+            <button class="btn btn-success" onclick="addCookie()" data-test-id="add-btn">Добавить</button>
+        </div>
+
+        <div id="messageContainer"></div>
+
+        <table data-test-id="cookies-table">
+            <thead>
+                <tr>
+                    <th>Ключ</th>
+                    <th>Значение</th>
+                    <th>Действия</th>
+                </tr>
+            </thead>
+            <tbody id="cookiesTableBody">
+                <!-- Данные будут загружены динамически -->
+            </tbody>
+        </table>
+
+        <div style="text-align: center; margin-top: 20px;">
+            <button class="btn" onclick="clearAllCookies()" data-test-id="clear-all-btn">Очистить все</button>
+            <button class="btn" onclick="loadDefaultCookies()" data-test-id="load-default-btn">Загрузить данные по умолчанию</button>
+            <button class="btn" onclick="refreshTable()" data-test-id="refresh-btn">Обновить таблицу</button>
+        </div>
+    </div>
+
+    <div class="footer" data-test-id="trainer-footer">Safronov_ID • Cookies Training</div>
+
+    <script>
+        const defaultCookies = {
+            'selenide_cookie_id': 'cookie_' + Date.now(),
+            'test_execution_mode': 'selenide_automation',
+            'user_preference_theme': 'dark'
+        };
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadDefaultCookies();
+            refreshTable();
+            showCookieInfo();
+        });
+
+        function showCookieInfo() {
+            const count = getAllCookies().length;
+            showMessage(`Сейчас установлено ${count} cookie(ов). Некоторые cookie могут быть недоступны через JS (HttpOnly).`, 'info');
+        }
+
+        function loadDefaultCookies() {
+            try {
+                const all = getAllCookies();
+                const existingKeys = new Set(all.map(c => c.key));
+                let added = 0;
+                Object.entries(defaultCookies).forEach(([key, value]) => {
+                    if (!existingKeys.has(key)) {
+                        setCookie(key, value, 7);
+                        added++;
+                    }
+                });
+                if (added > 0) {
+                    showMessage('Данные по умолчанию установлены в cookies!', 'success');
+                } else {
+                    showMessage('Данные по умолчанию уже присутствуют в cookies', 'success');
+                }
+                refreshTable();
+            } catch (error) {
+                showMessage('Ошибка при загрузке данных по умолчанию: ' + error.message, 'error');
+            }
+        }
+
+        function addCookie() {
+            const keyInput = document.getElementById('cookieKeyInput');
+            const valueInput = document.getElementById('cookieValueInput');
+            const daysInput = document.getElementById('cookieDaysInput');
+
+            const key = keyInput.value.trim();
+            const value = valueInput.value.trim();
+            const days = daysInput.value ? parseInt(daysInput.value, 10) : undefined;
+
+            if (!key || !value) {
+                showMessage('Пожалуйста, заполните ключ и значение', 'error');
+                return;
+            }
+
+            try {
+                const ok = setCookie(key, value, days);
+                if (!ok) throw new Error('Не удалось записать cookie');
+                showMessage(`Cookie "${key}" успешно установлена`, 'success');
+                keyInput.value = '';
+                valueInput.value = '';
+                daysInput.value = '';
+                refreshTable();
+            } catch (error) {
+                showMessage('Ошибка при добавлении cookie: ' + error.message, 'error');
+            }
+        }
+
+        function removeCookie(key) {
+            try {
+                deleteCookie(key);
+                showMessage(`Cookie "${key}" удалена`, 'success');
+                refreshTable();
+            } catch (error) {
+                showMessage('Ошибка при удалении cookie: ' + error.message, 'error');
+            }
+        }
+
+        function clearAllCookies() {
+            if (confirm('Вы уверены, что хотите удалить все cookies для этого сайта?')) {
+                try {
+                    const all = getAllCookies();
+                    all.forEach(({ key }) => deleteCookie(key));
+                    showMessage('Все cookies удалены', 'success');
+                    refreshTable();
+                } catch (error) {
+                    showMessage('Ошибка при удалении всех cookies: ' + error.message, 'error');
+                }
+            }
+        }
+
+        function refreshTable() {
+            const tbody = document.getElementById('cookiesTableBody');
+            tbody.innerHTML = '';
+            try {
+                const cookies = getAllCookies();
+                if (cookies.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="3" style="text-align: center; color: #666;">Нет доступных cookies</td></tr>';
+                    return;
+                }
+                cookies.forEach(({ key, value }) => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td data-test-id="key-${key}">${key}</td>
+                        <td data-test-id="value-${key}">${value}</td>
+                        <td>
+                            <button class=\"btn btn-danger\" onclick=\"removeCookie('${key}')\" data-test-id=\"remove-${key}\">Удалить</button>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            } catch (error) {
+                showMessage('Ошибка при обновлении таблицы: ' + error.message, 'error');
+            }
+        }
+
+        function showMessage(text, type) {
+            const container = document.getElementById('messageContainer');
+            const message = document.createElement('div');
+            message.className = `message ${type}`;
+            message.textContent = text;
+            message.setAttribute('data-test-id', `message-${type}`);
+            container.innerHTML = '';
+            container.appendChild(message);
+            setTimeout(() => {
+                if (message.parentNode) {
+                    message.parentNode.removeChild(message);
+                }
+            }, 3000);
+        }
+
+        // Обработка Enter
+        document.addEventListener('DOMContentLoaded', function() {
+            const keyEl = document.getElementById('cookieKeyInput');
+            const valEl = document.getElementById('cookieValueInput');
+            const daysEl = document.getElementById('cookieDaysInput');
+            keyEl.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    valEl.focus();
+                }
+            });
+            valEl.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    daysEl.focus();
+                }
+            });
+            daysEl.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    addCookie();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+
+

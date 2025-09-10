@@ -86,6 +86,9 @@ public class SecurityConfig {
                 })
             )
             .csrf(csrf -> csrf.disable())
+            .headers(headers -> headers
+                .frameOptions().sameOrigin()  // Разрешаем фреймы с того же домена
+            )
             .sessionManagement(session -> session
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
