@@ -783,38 +783,59 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Обработчики событий для валидации
+    // Функция для обновления атрибута value у полей ввода
+    function updateValueAttribute(field) {
+        if (field.type === 'checkbox' || field.type === 'radio') {
+            field.setAttribute('value', field.checked ? field.value : '');
+        } else {
+            field.setAttribute('value', field.value);
+        }
+    }
+
+    // Обработчики событий для валидации и обновления value
     document.getElementById('employeeName').addEventListener('input', function() {
+        updateValueAttribute(this);
         validateField(this, 'nameError', validationRules.name);
     });
 
     document.getElementById('employeeName').addEventListener('blur', function() {
+        updateValueAttribute(this);
         validateField(this, 'nameError', validationRules.name);
     });
 
     document.getElementById('employeeSurname').addEventListener('input', function() {
+        updateValueAttribute(this);
         validateField(this, 'surnameError', validationRules.surname);
     });
 
     document.getElementById('employeeSurname').addEventListener('blur', function() {
+        updateValueAttribute(this);
         validateField(this, 'surnameError', validationRules.surname);
     });
 
     document.getElementById('email').addEventListener('input', function() {
+        updateValueAttribute(this);
         validateField(this, 'emailError', validationRules.email);
     });
 
     document.getElementById('email').addEventListener('blur', function() {
+        updateValueAttribute(this);
         validateField(this, 'emailError', validationRules.email);
     });
 
     document.getElementById('javaVersion').addEventListener('change', function() {
+        updateValueAttribute(this);
         validateField(this, 'javaVersionError', validationRules.javaVersion);
     });
 
     // Валидация радио-кнопок для опыта
     document.querySelectorAll('input[name="autoTestExperience"]').forEach(radio => {
         radio.addEventListener('change', function() {
+            updateValueAttribute(this);
+            // Обновляем value для всех radio в группе
+            document.querySelectorAll('input[name="autoTestExperience"]').forEach(r => {
+                updateValueAttribute(r);
+            });
             const experienceError = document.getElementById('experienceError');
             if (this.checked) {
                 experienceError.classList.remove('show');
@@ -824,13 +845,17 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Обработка чекбокса "Не владею"
     document.getElementById('none').addEventListener('change', function() {
+        updateValueAttribute(this);
         const checkboxes = document.querySelectorAll('input[name="programmingLanguages"]');
         const languagesError = document.getElementById('languagesError');
         
         if (this.checked) {
             // Если выбрано "Не владею", снимаем остальные
             checkboxes.forEach(cb => {
-                if (cb !== this) cb.checked = false;
+                if (cb !== this) {
+                    cb.checked = false;
+                    updateValueAttribute(cb);
+                }
             });
             languagesError.classList.remove('show');
         } else {
@@ -846,9 +871,12 @@ document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('input[name="programmingLanguages"]').forEach(cb => {
         if (cb.id !== 'none') {
             cb.addEventListener('change', function() {
+                updateValueAttribute(this);
                 const languagesError = document.getElementById('languagesError');
                 if (this.checked) {
-                    document.getElementById('none').checked = false;
+                    const noneCheckbox = document.getElementById('none');
+                    noneCheckbox.checked = false;
+                    updateValueAttribute(noneCheckbox);
                     languagesError.classList.remove('show');
                 } else {
                     // Проверяем, остались ли выбранные языки
@@ -860,6 +888,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
         }
+    });
+    
+    // Инициализация атрибута value для всех полей при загрузке страницы
+    document.querySelectorAll('input[type="text"], input[type="email"], select').forEach(field => {
+        updateValueAttribute(field);
+    });
+    
+    document.querySelectorAll('input[type="radio"], input[type="checkbox"]').forEach(field => {
+        updateValueAttribute(field);
     });
     
     console.log('Валидация инициализирована!');
