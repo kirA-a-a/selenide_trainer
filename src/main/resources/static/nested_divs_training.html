@@ -128,48 +128,48 @@
         }
 
         /* Стили для разных дивов - уменьшаем размер с каждым уровнем вложенности */
-        [data-test-id="nested-div-1"] {
+        [data-test-id="unit-testing-data-test-id"] {
             border-left: 4px solid #667eea;
         }
 
-        [data-test-id="nested-div-2"] {
+        [data-test-id="integration-testing-data-test-id"] {
             border-left: 4px solid #764ba2;
         }
 
-        [data-test-id="nested-div-3"] {
+        [data-test-id="functional-testing-data-test-id"] {
             border-left: 4px solid #f093fb;
         }
 
-        [data-test-id="nested-div-4"] {
+        [data-test-id="regression-testing-data-test-id"] {
             border-left: 4px solid #4facfe;
         }
 
-        [data-test-id="nested-div-5"] {
+        [data-test-id="load-testing-data-test-id"] {
             border-left: 4px solid #43e97b;
         }
 
-        [data-test-id="nested-div-6"] {
+        [data-test-id="security-testing-data-test-id"] {
             border-left: 4px solid #fa709a;
         }
 
-        [data-test-id="nested-div-7"] {
+        [data-test-id="performance-testing-data-test-id"] {
             border-left: 4px solid #fee140;
         }
 
-        [data-test-id="nested-div-8"] {
+        [data-test-id="ui-testing-data-test-id"] {
             border-left: 4px solid #30cfd0;
         }
 
-        [data-test-id="nested-div-9"] {
+        [data-test-id="automation-testing-data-test-id"] {
             border-left: 4px solid #a8edea;
         }
 
-        [data-test-id="nested-div-10"] {
+        [data-test-id="manual-testing-data-test-id"] {
             border-left: 4px solid #ff6b6b;
         }
 
         /* Скрываем некоторые дивы */
-        #nested-div-4 {
+        #regression-testing-id {
             display: none;
         }
 
@@ -191,35 +191,35 @@
     </style>
 </head>
 <body>
-<div class="container" data-test-id="nested-divs-container">
-    <h1 id="nested-divs-title" data-test-id="nested-divs-title">
+<div class="container" id="testing-training-container-id" data-test-id="testing-training-container-data-test-id">
+    <h1 id="testing-training-title-id" data-test-id="testing-training-title-data-test-id">
         Тренировка работы с вложенными дивами
     </h1>
     
-    <div class="instruction" data-test-id="instruction">
+    <div class="instruction" id="testing-instruction-id" data-test-id="testing-instruction-data-test-id">
         На этой странице расположен родительский див с 10 вложенными дивами (матрешка) для практики работы с Selenide
     </div>
     
-    <div class="parent-div" data-test-id="parent-div">
-        <div class="nested-div" id="nested-div-1" data-test-id="nested-div-1">
+    <div class="parent-div" id="testing-container-id" data-test-id="testing-container-data-test-id">
+        <div class="nested-div" id="unit-testing-id" data-test-id="unit-testing-data-test-id">
             Unit тестирование - это процесс проверки отдельных компонентов или модулей программного обеспечения на корректность работы. Каждый unit тест проверяет изолированную функциональность.
-            <div class="nested-div" id="nested-div-2" data-test-id="nested-div-2">
+            <div class="nested-div" id="integration-testing-id" data-test-id="integration-testing-data-test-id">
                 Интеграционное тестирование - это проверка взаимодействия между различными модулями системы. Оно помогает выявить проблемы на стыке компонентов.
-                <div class="nested-div" id="nested-div-3" data-test-id="nested-div-3">
+                <div class="nested-div" id="functional-testing-id" data-test-id="functional-testing-data-test-id">
                     Функциональное тестирование - это проверка соответствия программного обеспечения функциональным требованиям. Тестировщик проверяет, что система работает согласно спецификации.
-                    <div class="nested-div" id="nested-div-4" data-test-id="nested-div-4">
+                    <div class="nested-div" id="regression-testing-id" data-test-id="regression-testing-data-test-id">
                         Регрессионное тестирование - это повторное тестирование уже проверенной функциональности после внесения изменений в код. Цель - убедиться, что новые изменения не сломали существующий функционал.
-                        <div class="nested-div" id="nested-div-5" data-test-id="nested-div-5">
+                        <div class="nested-div" id="load-testing-id" data-test-id="load-testing-data-test-id">
                             Нагрузочное тестирование - это проверка поведения системы под различными нагрузками. Оно помогает определить производительность и стабильность приложения при большом количестве пользователей.
-                            <div class="nested-div" id="nested-div-6" data-test-id="nested-div-6">
+                            <div class="nested-div" id="security-testing-id" data-test-id="security-testing-data-test-id">
                                 Тестирование безопасности - это процесс проверки защищенности приложения от различных угроз и уязвимостей. Включает проверку аутентификации, авторизации и защиты данных.
-                                <div class="nested-div" id="nested-div-7" data-test-id="nested-div-7">
+                                <div class="nested-div" id="performance-testing-id" data-test-id="performance-testing-data-test-id">
                                     Тестирование производительности - это оценка скорости работы приложения, времени отклика и использования ресурсов. Помогает оптимизировать работу системы.
-                                    <div class="nested-div" id="nested-div-8" data-test-id="nested-div-8">
+                                    <div class="nested-div" id="ui-testing-id" data-test-id="ui-testing-data-test-id">
                                         Тестирование пользовательского интерфейса - это проверка визуальных элементов, удобства использования и соответствия дизайн-макетам. Включает проверку кнопок, форм, навигации и адаптивности.
-                                        <div class="nested-div" id="nested-div-9" data-test-id="nested-div-9">
+                                        <div class="nested-div" id="automation-testing-id" data-test-id="automation-testing-data-test-id">
                                             Автоматизированное тестирование - это использование специальных инструментов и фреймворков для автоматического выполнения тестов. Selenide - один из популярных инструментов для автоматизации веб-тестирования на Java.
-                                            <div class="nested-div" id="nested-div-10" data-test-id="nested-div-10">
+                                            <div class="nested-div" id="manual-testing-id" data-test-id="manual-testing-data-test-id">
                                                 Ручное тестирование - это процесс проверки функциональности приложения тестировщиком вручную без использования автоматизации. Позволяет выявить проблемы, которые сложно автоматизировать, и оценить пользовательский опыт.
                                             </div>
                                         </div>
@@ -234,7 +234,7 @@
     </div>
 </div>
 
-<div class="footer" data-test-id="trainer-footer">Safronov_ID • Тренажер для AQA</div>
+<div class="footer" id="trainer-footer-id" data-test-id="trainer-footer-data-test-id">Safronov_ID • Тренажер для AQA</div>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
