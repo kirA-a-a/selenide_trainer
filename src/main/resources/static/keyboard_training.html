@@ -277,7 +277,10 @@
 </head>
 <body>
 <div class="container" data-test-id="keyboard-training-container">
-    <h1 id="keyboard-title" data-test-id="keyboard-title">Проверка нажатия клавиш на клавиатуре</h1>
+    <h1 id="keyboard-title" data-test-id="keyboard-title" data-alias-selector="#keyboard-title-alias">
+        Проверка нажатия клавиш на клавиатуре
+    </h1>
+    <span id="keyboard-title-alias" style="display: none;" data-test-id="keyboard-title-alias">Keyboard Training Title</span>
     
     <div class="instruction" data-test-id="instruction">
         Нажмите любую клавишу на клавиатуре, и она появится на экране

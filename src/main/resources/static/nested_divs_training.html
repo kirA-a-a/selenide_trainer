@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Nested Divs Training</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* Базовый стиль */
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        /* Контейнер */
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 900px;
+            margin: 0 auto;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            position: relative;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* Иконка контейнера */
+        .container::before {
+            content: "📦";
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 50px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 8px 16px;
+            border-radius: 50%;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            z-index: 10;
+        }
+
+        /* Заголовок */
+        h1 {
+            color: #333;
+            text-align: center;
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 32px;
+            position: relative;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        h1::after {
+            content: "";
+            display: block;
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 16px auto 0;
+            border-radius: 2px;
+        }
+
+        /* Инструкция */
+        .instruction {
+            text-align: center;
+            color: #666;
+            font-size: 16px;
+            margin-bottom: 32px;
+            padding: 16px;
+            background: rgba(102, 126, 234, 0.05);
+            border-radius: 12px;
+        }
+
+        /* Родительский див */
+        .parent-div {
+            background: rgba(102, 126, 234, 0.08);
+            border: 3px solid rgba(102, 126, 234, 0.3);
+            border-radius: 16px;
+            padding: 30px;
+            margin: 20px 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Вложенные дивы */
+        .nested-div {
+            background: rgba(255, 255, 255, 0.9);
+            border: 2px solid rgba(102, 126, 234, 0.2);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            font-size: 16px;
+            line-height: 1.6;
+            color: #333;
+            position: relative;
+        }
+        
+        /* Убираем визуальную вложенность - все дивы выглядят на одном уровне */
+        .nested-div .nested-div {
+            margin-left: 0;
+            margin-right: 0;
+            margin-top: 15px;
+            margin-bottom: 15px;
+        }
+
+        .nested-div:hover {
+            border-color: rgba(102, 126, 234, 0.5);
+            box-shadow: 0 4px 16px rgba(102, 126, 234, 0.2);
+            background: rgba(255, 255, 255, 1);
+        }
+
+        /* Стили для разных дивов - уменьшаем размер с каждым уровнем вложенности */
+        [data-test-id="nested-div-1"] {
+            border-left: 4px solid #667eea;
+        }
+
+        [data-test-id="nested-div-2"] {
+            border-left: 4px solid #764ba2;
+        }
+
+        [data-test-id="nested-div-3"] {
+            border-left: 4px solid #f093fb;
+        }
+
+        [data-test-id="nested-div-4"] {
+            border-left: 4px solid #4facfe;
+        }
+
+        [data-test-id="nested-div-5"] {
+            border-left: 4px solid #43e97b;
+        }
+
+        [data-test-id="nested-div-6"] {
+            border-left: 4px solid #fa709a;
+        }
+
+        [data-test-id="nested-div-7"] {
+            border-left: 4px solid #fee140;
+        }
+
+        [data-test-id="nested-div-8"] {
+            border-left: 4px solid #30cfd0;
+        }
+
+        [data-test-id="nested-div-9"] {
+            border-left: 4px solid #a8edea;
+        }
+
+        [data-test-id="nested-div-10"] {
+            border-left: 4px solid #ff6b6b;
+        }
+
+        /* Футер */
+        .footer {
+            width: 100%;
+            text-align: center;
+            padding: 12px 0;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            color: white;
+            font-size: 14px;
+            opacity: 0.9;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+        }
+    </style>
+</head>
+<body>
+<div class="container" data-test-id="nested-divs-container">
+    <h1 id="nested-divs-title" data-test-id="nested-divs-title">
+        Тренировка работы с вложенными дивами
+    </h1>
+    
+    <div class="instruction" data-test-id="instruction">
+        На этой странице расположен родительский див с 10 вложенными дивами (матрешка) для практики работы с Selenide
+    </div>
+    
+    <div class="parent-div" data-test-id="parent-div">
+        <div class="nested-div" id="nested-div-1" data-test-id="nested-div-1">
+            <strong>Unit тестирование</strong> - это процесс проверки отдельных компонентов или модулей программного обеспечения на корректность работы. Каждый unit тест проверяет изолированную функциональность.
+            <div class="nested-div" id="nested-div-2" data-test-id="nested-div-2">
+                <strong>Интеграционное тестирование</strong> - это проверка взаимодействия между различными модулями системы. Оно помогает выявить проблемы на стыке компонентов.
+                <div class="nested-div" id="nested-div-3" data-test-id="nested-div-3">
+                    <strong>Функциональное тестирование</strong> - это проверка соответствия программного обеспечения функциональным требованиям. Тестировщик проверяет, что система работает согласно спецификации.
+                    <div class="nested-div" id="nested-div-4" data-test-id="nested-div-4">
+                        <strong>Регрессионное тестирование</strong> - это повторное тестирование уже проверенной функциональности после внесения изменений в код. Цель - убедиться, что новые изменения не сломали существующий функционал.
+                        <div class="nested-div" id="nested-div-5" data-test-id="nested-div-5">
+                            <strong>Нагрузочное тестирование</strong> - это проверка поведения системы под различными нагрузками. Оно помогает определить производительность и стабильность приложения при большом количестве пользователей.
+                            <div class="nested-div" id="nested-div-6" data-test-id="nested-div-6">
+                                <strong>Тестирование безопасности</strong> - это процесс проверки защищенности приложения от различных угроз и уязвимостей. Включает проверку аутентификации, авторизации и защиты данных.
+                                <div class="nested-div" id="nested-div-7" data-test-id="nested-div-7">
+                                    <strong>Тестирование производительности</strong> - это оценка скорости работы приложения, времени отклика и использования ресурсов. Помогает оптимизировать работу системы.
+                                    <div class="nested-div" id="nested-div-8" data-test-id="nested-div-8">
+                                        <strong>Тестирование пользовательского интерфейса</strong> - это проверка визуальных элементов, удобства использования и соответствия дизайн-макетам. Включает проверку кнопок, форм, навигации и адаптивности.
+                                        <div class="nested-div" id="nested-div-9" data-test-id="nested-div-9">
+                                            <strong>Автоматизированное тестирование</strong> - это использование специальных инструментов и фреймворков для автоматического выполнения тестов. Selenide - один из популярных инструментов для автоматизации веб-тестирования на Java.
+                                            <div class="nested-div" id="nested-div-10" data-test-id="nested-div-10">
+                                                <strong>Ручное тестирование</strong> - это процесс проверки функциональности приложения тестировщиком вручную без использования автоматизации. Позволяет выявить проблемы, которые сложно автоматизировать, и оценить пользовательский опыт.
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="footer" data-test-id="trainer-footer">Safronov_ID • Тренажер для AQA</div>
+</body>
+</html>
+
