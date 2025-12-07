@@ -195,6 +195,152 @@
             position: relative;
         }
 
+        /* Обертка для input с поддержкой псевдоэлементов для Selenide pseudo() */
+        .input-wrapper {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+
+        /* Решение для pseudo(":placeholder") - используем ::before с content: attr(data-placeholder) */
+        .input-wrapper::before {
+            content: attr(data-placeholder);
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+            pointer-events: none;
+            font-size: 16px;
+            z-index: 1;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        /* Показываем placeholder когда input пустой и не в фокусе */
+        .input-wrapper:has(input:placeholder-shown:not(:focus))::before {
+            opacity: 1;
+        }
+
+        /* Скрываем стандартный placeholder, чтобы не было дублирования */
+        .input-wrapper input::placeholder {
+            color: transparent;
+        }
+
+        /* Решение для pseudo(":after") - используем ::after с content: attr(data-after) */
+        .input-wrapper[data-after]::after {
+            content: attr(data-after);
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            pointer-events: none;
+            font-size: 16px;
+            z-index: 1;
+        }
+
+        /* Решение для получения атрибутов через псевдоэлементы для Selenide pseudo() */
+        /* Используем отдельные псевдоэлементы для каждого атрибута, чтобы можно было получить их через pseudo(":after", "content") */
+        .input-wrapper[data-title]::after {
+            content: attr(data-title);
+            position: absolute;
+            visibility: hidden;
+            opacity: 0;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+
+        .input-wrapper[data-name]::after {
+            content: attr(data-name);
+            position: absolute;
+            visibility: hidden;
+            opacity: 0;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+
+        .input-wrapper[data-value]::after {
+            content: attr(data-value);
+            position: absolute;
+            visibility: hidden;
+            opacity: 0;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+
+        .input-wrapper[data-pattern]::after {
+            content: attr(data-pattern);
+            position: absolute;
+            visibility: hidden;
+            opacity: 0;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+
+        .input-wrapper[data-minlength]::after {
+            content: attr(data-minlength);
+            position: absolute;
+            visibility: hidden;
+            opacity: 0;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+
+        .input-wrapper[data-maxlength]::after {
+            content: attr(data-maxlength);
+            position: absolute;
+            visibility: hidden;
+            opacity: 0;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+
+        /* Решение для select внутри .input-wrapper - показываем placeholder когда выбран пустой option */
+        .input-wrapper:has(select option[value=""]:checked:not(:focus))::before {
+            opacity: 1;
+        }
+
+        /* Поддержка псевдоэлементов для других элементов для работы с Selenide pseudo() */
+        label[data-title]::after,
+        button[data-title]::after,
+        select[data-title]::after {
+            content: attr(data-title);
+            position: absolute;
+            visibility: hidden;
+            opacity: 0;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+
+        label[data-name]::after,
+        button[data-name]::after,
+        select[data-name]::after {
+            content: attr(data-name);
+            position: absolute;
+            visibility: hidden;
+            opacity: 0;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+
+        label[data-value]::after,
+        button[data-value]::after,
+        select[data-value]::after {
+            content: attr(data-value);
+            position: absolute;
+            visibility: hidden;
+            opacity: 0;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+
+        /* Поддержка ::before для элементов с data-placeholder */
+        label[data-placeholder]::before,
+        button[data-placeholder]::before,
+        select[data-placeholder]::before {
+            content: attr(data-placeholder);
+        }
+
         input[type="text"]:focus,
         input[type="email"]:focus,
         select:focus,
@@ -452,42 +598,68 @@
     <form id="employeeForm" data-test-id="employee-form">
         <div class="form-group">
             <label for="employeeName" data-test-id="name-label">Имя:</label>
-            <input type="text" id="employeeName" name="employeeName" data-test-id="name-input" 
-                   required minlength="2" maxlength="30" 
-                   pattern="[A-Za-zА-Яа-яЁё\s]+" 
-                   title="Имя должно содержать от 2 до 30 символов и только буквы"
-                   placeholder="Введите ваше имя">
+            <div class="input-wrapper" 
+                 data-placeholder="Введите ваше имя"
+                 data-title="Имя должно содержать от 2 до 30 символов и только буквы"
+                 data-name="employeeName"
+                 data-pattern="[A-Za-zА-Яа-яЁё\s]+"
+                 data-minlength="2"
+                 data-maxlength="30">
+                <input type="text" id="employeeName" name="employeeName" data-test-id="name-input" 
+                       required minlength="2" maxlength="30" 
+                       pattern="[A-Za-zА-Яа-яЁё\s]+" 
+                       title="Имя должно содержать от 2 до 30 символов и только буквы"
+                       placeholder="Введите ваше имя">
+            </div>
             <div class="error-message" id="nameError">Имя должно содержать от 2 до 30 символов и только буквы</div>
         </div>
 
         <div class="form-group">
             <label for="employeeSurname" data-test-id="surname-label">Фамилия:</label>
-            <input type="text" id="employeeSurname" name="employeeSurname" data-test-id="surname-input" 
-                   required minlength="2" maxlength="30" 
-                   pattern="[A-Za-zА-Яа-яЁё\s]+" 
-                   title="Фамилия должна содержать от 2 до 30 символов и только буквы"
-                   placeholder="Введите вашу фамилию">
+            <div class="input-wrapper" 
+                 data-placeholder="Введите вашу фамилию"
+                 data-title="Фамилия должна содержать от 2 до 30 символов и только буквы"
+                 data-name="employeeSurname"
+                 data-pattern="[A-Za-zА-Яа-яЁё\s]+"
+                 data-minlength="2"
+                 data-maxlength="30">
+                <input type="text" id="employeeSurname" name="employeeSurname" data-test-id="surname-input" 
+                       required minlength="2" maxlength="30" 
+                       pattern="[A-Za-zА-Яа-яЁё\s]+" 
+                       title="Фамилия должна содержать от 2 до 30 символов и только буквы"
+                       placeholder="Введите вашу фамилию">
+            </div>
             <div class="error-message" id="surnameError">Фамилия должна содержать от 2 до 30 символов и только буквы</div>
         </div>
 
         <div class="form-group">
             <label for="email" data-test-id="email-label">Email:</label>
-            <input type="email" id="email" name="email" data-test-id="email-input" 
-                   required 
-                   title="Введите корректный email адрес"
-                   placeholder="example@email.com">
+            <div class="input-wrapper" 
+                 data-placeholder="example@email.com"
+                 data-title="Введите корректный email адрес"
+                 data-name="email">
+                <input type="email" id="email" name="email" data-test-id="email-input" 
+                       required 
+                       title="Введите корректный email адрес"
+                       placeholder="example@email.com">
+            </div>
             <div class="error-message" id="emailError">Введите корректный email адрес</div>
         </div>
 
         <div class="form-group">
             <label for="javaVersion" data-test-id="java-version-label">Версия Java:</label>
-            <select id="javaVersion" name="javaVersion" data-test-id="java-version-select" required>
-                <option value="">Выберите версию</option>
-                <option value="8">Java 8</option>
-                <option value="11">Java 11</option>
-                <option value="17">Java 17</option>
-                <option value="21">Java 21</option>
-            </select>
+            <div class="input-wrapper" 
+                 data-placeholder="Выберите версию"
+                 data-title="Выберите версию Java"
+                 data-name="javaVersion">
+                <select id="javaVersion" name="javaVersion" data-test-id="java-version-select" required>
+                    <option value="">Выберите версию</option>
+                    <option value="8">Java 8</option>
+                    <option value="11">Java 11</option>
+                    <option value="17">Java 17</option>
+                    <option value="21">Java 21</option>
+                </select>
+            </div>
             <div class="error-message" id="javaVersionError">Пожалуйста, выберите версию Java</div>
         </div>
 
