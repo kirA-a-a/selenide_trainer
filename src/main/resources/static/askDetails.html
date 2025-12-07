@@ -195,6 +195,93 @@
             position: relative;
         }
 
+        /* Псевдоэлементы непосредственно на input элементах для работы с Selenide pseudo() */
+        /* Решение для pseudo(":placeholder") на самом input элементе */
+        input[type="text"][data-placeholder]::before,
+        input[type="email"][data-placeholder]::before {
+            content: attr(data-placeholder);
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+            pointer-events: none;
+            font-size: 16px;
+            z-index: 1;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        /* Показываем placeholder когда input пустой и не в фокусе */
+        input[type="text"][data-placeholder]:placeholder-shown:not(:focus)::before,
+        input[type="email"][data-placeholder]:placeholder-shown:not(:focus)::before {
+            opacity: 1;
+        }
+
+        /* Решение для получения атрибутов через ::after на самом input элементе */
+        input[type="text"][data-title]::after,
+        input[type="email"][data-title]::after,
+        select[data-title]::after {
+            content: attr(data-title);
+            position: absolute;
+            visibility: hidden;
+            opacity: 0;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+
+        input[type="text"][data-name]::after,
+        input[type="email"][data-name]::after,
+        select[data-name]::after {
+            content: attr(data-name);
+            position: absolute;
+            visibility: hidden;
+            opacity: 0;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+
+        input[type="text"][data-value]::after,
+        input[type="email"][data-value]::after,
+        select[data-value]::after {
+            content: attr(data-value);
+            position: absolute;
+            visibility: hidden;
+            opacity: 0;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+
+        input[type="text"][data-pattern]::after,
+        input[type="email"][data-pattern]::after {
+            content: attr(data-pattern);
+            position: absolute;
+            visibility: hidden;
+            opacity: 0;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+
+        input[type="text"][data-minlength]::after,
+        input[type="email"][data-minlength]::after {
+            content: attr(data-minlength);
+            position: absolute;
+            visibility: hidden;
+            opacity: 0;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+
+        input[type="text"][data-maxlength]::after,
+        input[type="email"][data-maxlength]::after {
+            content: attr(data-maxlength);
+            position: absolute;
+            visibility: hidden;
+            opacity: 0;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+
         /* Обертка для input с поддержкой псевдоэлементов для Selenide pseudo() */
         .input-wrapper {
             position: relative;
@@ -606,6 +693,12 @@
                  data-minlength="2"
                  data-maxlength="30">
                 <input type="text" id="employeeName" name="employeeName" data-test-id="name-input" 
+                       data-placeholder="Введите ваше имя"
+                       data-title="Имя должно содержать от 2 до 30 символов и только буквы"
+                       data-name="employeeName"
+                       data-pattern="[A-Za-zА-Яа-яЁё\s]+"
+                       data-minlength="2"
+                       data-maxlength="30"
                        required minlength="2" maxlength="30" 
                        pattern="[A-Za-zА-Яа-яЁё\s]+" 
                        title="Имя должно содержать от 2 до 30 символов и только буквы"
@@ -624,6 +717,12 @@
                  data-minlength="2"
                  data-maxlength="30">
                 <input type="text" id="employeeSurname" name="employeeSurname" data-test-id="surname-input" 
+                       data-placeholder="Введите вашу фамилию"
+                       data-title="Фамилия должна содержать от 2 до 30 символов и только буквы"
+                       data-name="employeeSurname"
+                       data-pattern="[A-Za-zА-Яа-яЁё\s]+"
+                       data-minlength="2"
+                       data-maxlength="30"
                        required minlength="2" maxlength="30" 
                        pattern="[A-Za-zА-Яа-яЁё\s]+" 
                        title="Фамилия должна содержать от 2 до 30 символов и только буквы"
@@ -639,6 +738,9 @@
                  data-title="Введите корректный email адрес"
                  data-name="email">
                 <input type="email" id="email" name="email" data-test-id="email-input" 
+                       data-placeholder="example@email.com"
+                       data-title="Введите корректный email адрес"
+                       data-name="email"
                        required 
                        title="Введите корректный email адрес"
                        placeholder="example@email.com">
@@ -652,7 +754,11 @@
                  data-placeholder="Выберите версию"
                  data-title="Выберите версию Java"
                  data-name="javaVersion">
-                <select id="javaVersion" name="javaVersion" data-test-id="java-version-select" required>
+                <select id="javaVersion" name="javaVersion" data-test-id="java-version-select" 
+                        data-placeholder="Выберите версию"
+                        data-title="Выберите версию Java"
+                        data-name="javaVersion"
+                        required>
                     <option value="">Выберите версию</option>
                     <option value="8">Java 8</option>
                     <option value="11">Java 11</option>
