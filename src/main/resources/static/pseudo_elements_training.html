@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Pseudo Elements Training</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* Базовый стиль */
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        /* Контейнер */
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 800px;
+            margin: 0 auto;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            position: relative;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* Иконка контейнера */
+        .container::before {
+            content: "🎯";
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 50px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 8px 16px;
+            border-radius: 50%;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            z-index: 10;
+        }
+
+        /* Заголовок */
+        h1 {
+            color: #333;
+            text-align: center;
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 32px;
+            position: relative;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        h1::after {
+            content: "";
+            display: block;
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 16px auto 0;
+            border-radius: 2px;
+        }
+
+        /* Инструкция */
+        .instruction {
+            text-align: center;
+            color: #666;
+            font-size: 16px;
+            margin-bottom: 32px;
+            padding: 16px;
+            background: rgba(102, 126, 234, 0.05);
+            border-radius: 12px;
+        }
+
+        /* Элементы для тестирования псевдоэлементов */
+        .pseudo-element-box {
+            background: rgba(255, 255, 255, 0.9);
+            border: 2px solid rgba(102, 126, 234, 0.2);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .pseudo-element-box:hover {
+            border-color: rgba(102, 126, 234, 0.5);
+            box-shadow: 0 4px 16px rgba(102, 126, 234, 0.2);
+            transform: translateY(-2px);
+        }
+
+        /* Явно устанавливаем border-color для работы с pseudo() */
+        .pseudo-element-box {
+            border-color: rgba(102, 126, 234, 0.2);
+        }
+
+        /* Псевдоэлемент ::before для получения placeholder и других свойств */
+        .pseudo-element-box[data-placeholder]::before {
+            content: attr(data-placeholder);
+            position: absolute;
+            visibility: hidden;
+            opacity: 0;
+            pointer-events: none;
+            white-space: nowrap;
+            border-color: rgba(102, 126, 234, 0.2);
+        }
+
+        /* Псевдоэлемент ::before для получения border-color */
+        .pseudo-element-box[data-border-color]::before {
+            content: attr(data-border-color);
+            position: absolute;
+            visibility: hidden;
+            opacity: 0;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+
+        /* Псевдоэлемент ::before для получения placeholder (скрыт визуально, но доступен через getComputedStyle) */
+        .pseudo-element-box[data-placeholder]::before {
+            content: attr(data-placeholder);
+            position: absolute;
+            visibility: hidden;
+            opacity: 0;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+
+        /* Псевдоэлемент ::after для получения title */
+        .pseudo-element-box[data-title]::after {
+            content: attr(data-title);
+            position: absolute;
+            visibility: hidden;
+            opacity: 0;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+
+        /* Отдельные скрытые элементы для получения name через ::after */
+        .pseudo-name-element[data-name]::after {
+            content: attr(data-name);
+            position: absolute;
+            visibility: hidden;
+            opacity: 0;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+
+        /* Отдельные скрытые элементы для получения value через ::after */
+        .pseudo-value-element[data-value]::after {
+            content: attr(data-value);
+            position: absolute;
+            visibility: hidden;
+            opacity: 0;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+
+        /* Примеры других псевдоэлементов для тестирования */
+        /* ::first-line - первая строка текста */
+        .pseudo-element-box[data-first-line]::first-line {
+            content: attr(data-first-line);
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        /* ::first-letter - первая буква */
+        .pseudo-element-box[data-first-letter]::first-letter {
+            content: attr(data-first-letter);
+            font-size: 2em;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        /* ::selection - выделенный текст */
+        .pseudo-element-box[data-selection]::selection {
+            background-color: rgba(102, 126, 234, 0.3);
+            color: #333;
+        }
+
+        /* Поле ввода с псевдоэлементами */
+        .pseudo-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 16px;
+            box-sizing: border-box;
+            background: rgba(255, 255, 255, 0.9);
+            position: relative;
+        }
+
+        .pseudo-input[data-placeholder]::before {
+            content: attr(data-placeholder);
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+            pointer-events: none;
+            font-size: 16px;
+            z-index: 1;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .pseudo-input[data-placeholder]:placeholder-shown:not(:focus)::before {
+            opacity: 1;
+        }
+
+        /* Скрываем стандартный placeholder для input, чтобы не было дублирования */
+        .pseudo-input::placeholder {
+            color: transparent;
+        }
+
+        .pseudo-input[data-title]::after {
+            content: attr(data-title);
+            position: absolute;
+            visibility: hidden;
+            opacity: 0;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+
+        .pseudo-input[data-name]::after {
+            content: attr(data-name);
+            position: absolute;
+            visibility: hidden;
+            opacity: 0;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+
+        /* Кнопка с псевдоэлементами */
+        .pseudo-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            margin: 10px 5px;
+        }
+
+        .pseudo-button[data-title]::after {
+            content: attr(data-title);
+            position: absolute;
+            visibility: hidden;
+            opacity: 0;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+
+        .pseudo-button[data-name]::after {
+            content: attr(data-name);
+            position: absolute;
+            visibility: hidden;
+            opacity: 0;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+
+        .pseudo-button[data-value]::after {
+            content: attr(data-value);
+            position: absolute;
+            visibility: hidden;
+            opacity: 0;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+
+        /* Метка с псевдоэлементами */
+        .pseudo-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+            font-size: 16px;
+            position: relative;
+        }
+
+        .pseudo-label[data-title]::after {
+            content: attr(data-title);
+            position: absolute;
+            visibility: hidden;
+            opacity: 0;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+
+        .pseudo-label[data-name]::after {
+            content: attr(data-name);
+            position: absolute;
+            visibility: hidden;
+            opacity: 0;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+
+        /* Футер */
+        .footer {
+            width: 100%;
+            text-align: center;
+            padding: 12px 0;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            color: white;
+            font-size: 14px;
+            opacity: 0.9;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+        }
+    </style>
+</head>
+<body>
+<div class="container" data-test-id="pseudo-elements-container">
+    <h1 id="pseudo-elements-title" data-test-id="pseudo-elements-title">
+        Тренировка работы с псевдоэлементами
+    </h1>
+    
+    <div class="instruction" data-test-id="instruction">
+        Эта страница предназначена для практики работы с методом pseudo() из Selenide<br>
+        <small style="color: #888; margin-top: 10px; display: block;">
+            <strong>Псевдоэлементы:</strong> ::before, ::after, ::placeholder, ::first-line, ::first-letter, ::selection<br>
+            <strong>Псевдоклассы:</strong> :hover, :focus, :active, :first-child, :last-child, :nth-child(), :not(), :checked, :disabled, :valid, :invalid
+        </small>
+    </div>
+    
+    <div class="pseudo-element-box" 
+         id="box-1" 
+         data-test-id="pseudo-box-1"
+         data-placeholder="Placeholder для box-1"
+         data-title="Title для box-1"
+         data-name="box-1-name"
+         data-value="box-1-value"
+         data-border-color="rgba(102, 126, 234, 0.2)">
+        <strong>Box 1</strong> - Элемент с псевдоэлементами ::before и ::after
+    </div>
+    
+    <!-- Отдельные скрытые элементы для получения name через ::after -->
+    <div class="pseudo-name-element" 
+         id="box-1-name" 
+         data-test-id="pseudo-box-1-name"
+         data-name="box-1-name"
+         style="display: none;">
+    </div>
+    
+    <!-- Отдельные скрытые элементы для получения value через ::after -->
+    <div class="pseudo-value-element" 
+         id="box-1-value" 
+         data-test-id="pseudo-box-1-value"
+         data-value="box-1-value"
+         style="display: none;">
+    </div>
+    
+    <div class="pseudo-element-box" 
+         id="box-2" 
+         data-test-id="pseudo-box-2"
+         data-placeholder="Placeholder для box-2"
+         data-title="Title для box-2"
+         data-name="box-2-name"
+         data-value="box-2-value">
+        <strong>Box 2</strong> - Еще один элемент с псевдоэлементами
+    </div>
+    
+    <div class="pseudo-name-element" 
+         id="box-2-name" 
+         data-test-id="pseudo-box-2-name"
+         data-name="box-2-name"
+         style="display: none;">
+    </div>
+    
+    <div class="pseudo-value-element" 
+         id="box-2-value" 
+         data-test-id="pseudo-box-2-value"
+         data-value="box-2-value"
+         style="display: none;">
+    </div>
+    
+    <div class="pseudo-element-box" 
+         id="box-3" 
+         data-test-id="pseudo-box-3"
+         data-placeholder="Placeholder для box-3"
+         data-title="Title для box-3"
+         data-name="box-3-name"
+         data-value="box-3-value">
+        <strong>Box 3</strong> - Третий элемент для тестирования
+    </div>
+    
+    <div class="pseudo-name-element" 
+         id="box-3-name" 
+         data-test-id="pseudo-box-3-name"
+         data-name="box-3-name"
+         style="display: none;">
+    </div>
+    
+    <div class="pseudo-value-element" 
+         id="box-3-value" 
+         data-test-id="pseudo-box-3-value"
+         data-value="box-3-value"
+         style="display: none;">
+    </div>
+    
+    <div class="pseudo-element-box">
+        <label class="pseudo-label" 
+               for="test-input-1"
+               id="label-1"
+               data-test-id="pseudo-label-1"
+               data-title="Label title для input-1"
+               data-name="label-1-name">
+            Поле ввода 1:
+        </label>
+        <input type="text" 
+               id="test-input-1" 
+               class="pseudo-input"
+               data-test-id="pseudo-input-1"
+               data-placeholder="Введите текст для input-1"
+               data-title="Input title для input-1"
+               data-name="test-input-1-name"
+               placeholder="Введите текст для input-1">
+    </div>
+    
+    <div class="pseudo-element-box">
+        <label class="pseudo-label" 
+               for="test-input-2"
+               id="label-2"
+               data-test-id="pseudo-label-2"
+               data-title="Label title для input-2"
+               data-name="label-2-name">
+            Поле ввода 2:
+        </label>
+        <input type="text" 
+               id="test-input-2" 
+               class="pseudo-input"
+               data-test-id="pseudo-input-2"
+               data-placeholder="Введите текст для input-2"
+               data-title="Input title для input-2"
+               data-name="test-input-2-name"
+               placeholder="Введите текст для input-2">
+    </div>
+    
+    <div class="pseudo-element-box">
+        <button type="button" 
+                id="test-button-1" 
+                class="pseudo-button"
+                data-test-id="pseudo-button-1"
+                data-title="Button title для button-1"
+                data-name="test-button-1-name"
+                data-value="button-1-value">
+            Кнопка 1
+        </button>
+        
+        <button type="button" 
+                id="test-button-2" 
+                class="pseudo-button"
+                data-test-id="pseudo-button-2"
+                data-title="Button title для button-2"
+                data-name="test-button-2-name"
+                data-value="button-2-value">
+            Кнопка 2
+        </button>
+    </div>
+</div>
+
+<div class="footer" data-test-id="trainer-footer">Safronov_ID • Тренажер для AQA</div>
+</body>
+</html>
+
