@@ -770,18 +770,18 @@
         </div>
 
         <div class="form-group">
-            <label data-test-id="experience-label">Опыт автотестирования:</label>
-            <div class="radio-group" data-test-id="experience-radio-group">
-                <div class="radio-item">
-                    <input type="radio" id="experienceYes" name="autoTestExperience" value="да" data-test-id="experience-yes" required>
-                    <label for="experienceYes">Да</label>
+            <label data-test-id="experience-label-data-test-id">Опыт автотестирования:</label>
+            <div class="radio-group" id="experience-radio-group-id" data-test-id="experience-radio-group-data-test-id">
+                <div class="radio-item" id="experience-yes-item-id">
+                    <input type="radio" id="experienceYes-id" name="autoTestExperience-name" value="Да" data-test-id="experience-yes-data-test-id" required="">
+                    <label for="experienceYes-id">Да</label>
                 </div>
-                <div class="radio-item">
-                    <input type="radio" id="experienceNo" name="autoTestExperience" value="нет" data-test-id="experience-no" required>
-                    <label for="experienceNo">Нет</label>
+                <div class="radio-item" id="experience-no-item-id">
+                    <input type="radio" id="experienceNo-id" name="autoTestExperience-name" value="Нет" data-test-id="experience-no-data-test-id" required="">
+                    <label for="experienceNo-id">Нет</label>
                 </div>
             </div>
-            <div class="error-message" id="experienceError">Пожалуйста, выберите опыт автотестирования</div>
+            <div class="error-message" id="experienceError-id">Пожалуйста, выберите опыт автотестирования</div>
         </div>
 
         <div class="form-group">
@@ -948,8 +948,8 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         // Валидация опыта автотестирования
-        const experienceRadios = document.querySelectorAll('input[name="autoTestExperience"]');
-        const experienceError = document.getElementById('experienceError');
+        const experienceRadios = document.querySelectorAll('input[name="autoTestExperience-name"]');
+        const experienceError = document.getElementById('experienceError-id');
         const experienceSelected = Array.from(experienceRadios).some(radio => radio.checked);
         console.log('Опыт выбран:', experienceSelected);
         
@@ -1063,8 +1063,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Функция для обновления атрибута value у полей ввода
     function updateValueAttribute(field) {
-        if (field.type === 'checkbox' || field.type === 'radio') {
+        if (field.type === 'checkbox') {
             field.setAttribute('value', field.checked ? field.value : '');
+        } else if (field.type === 'radio') {
+            // Для радиобаттонов не меняем value атрибут - он должен оставаться исходным из HTML
+            // Обновляем только если радиобаттон выбран
+            if (field.checked) {
+                field.setAttribute('value', field.value);
+            }
         } else {
             field.setAttribute('value', field.value);
         }
@@ -1107,14 +1113,14 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Валидация радио-кнопок для опыта
-    document.querySelectorAll('input[name="autoTestExperience"]').forEach(radio => {
+    document.querySelectorAll('input[name="autoTestExperience-name"]').forEach(radio => {
         radio.addEventListener('change', function() {
             updateValueAttribute(this);
             // Обновляем value для всех radio в группе
-            document.querySelectorAll('input[name="autoTestExperience"]').forEach(r => {
+            document.querySelectorAll('input[name="autoTestExperience-name"]').forEach(r => {
                 updateValueAttribute(r);
             });
-            const experienceError = document.getElementById('experienceError');
+            const experienceError = document.getElementById('experienceError-id');
             if (this.checked) {
                 experienceError.classList.remove('show');
             }
@@ -1173,7 +1179,9 @@ document.addEventListener('DOMContentLoaded', function() {
         updateValueAttribute(field);
     });
     
-    document.querySelectorAll('input[type="radio"], input[type="checkbox"]').forEach(field => {
+    // Для радиобаттонов не обновляем value при инициализации - они уже имеют правильные значения из HTML
+    // Обновляем только для чекбоксов
+    document.querySelectorAll('input[type="checkbox"]').forEach(field => {
         updateValueAttribute(field);
     });
     
