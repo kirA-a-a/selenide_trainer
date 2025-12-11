@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Animated Training</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* Базовый стиль */
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        /* Контейнер */
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 1000px;
+            margin: 0 auto;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            position: relative;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* Заголовок */
+        h1 {
+            color: #333;
+            text-align: center;
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 32px;
+            position: relative;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        h1::after {
+            content: "";
+            display: block;
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 16px auto 0;
+            border-radius: 2px;
+        }
+
+        /* Базовое описание */
+        .description {
+            text-align: center;
+            color: #666;
+            font-size: 16px;
+            margin-bottom: 32px;
+            padding: 16px;
+            background: rgba(102, 126, 234, 0.05);
+            border-radius: 12px;
+            line-height: 1.6;
+        }
+
+        /* Область для анимаций */
+        .animation-area {
+            background: rgba(102, 126, 234, 0.05);
+            border-radius: 12px;
+            padding: 30px;
+            margin: 30px 0;
+            min-height: 300px;
+            position: relative;
+            border: 2px dashed rgba(102, 126, 234, 0.2);
+        }
+
+        /* Боксы для анимаций */
+        .box {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            position: relative;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s ease;
+        }
+
+        .box.animate {
+            /* Анимация, меняющая позицию - БУДЕТ ОБНАРУЖЕНА */
+            animation: move 2s infinite;
+        }
+
+        .box.animate-size {
+            /* Анимация, меняющая размер - БУДЕТ ОБНАРУЖЕНА */
+            animation: resize 2s infinite;
+        }
+
+        .box.animate-color {
+            /* Анимация только цвета - НЕ БУДЕТ ОБНАРУЖЕНА */
+            animation: colorChange 2s infinite;
+        }
+
+        .box.animate-transform {
+            /* Анимация через transform - БУДЕТ ОБНАРУЖЕНА */
+            animation: transformMove 2s infinite;
+        }
+
+        /* Ключевые кадры анимаций */
+        @keyframes move {
+            0% { left: 0px; top: 0px; }
+            50% { left: 200px; top: 100px; }
+            100% { left: 0px; top: 0px; }
+        }
+
+        @keyframes resize {
+            0% { width: 100px; height: 100px; }
+            50% { width: 200px; height: 200px; }
+            100% { width: 100px; height: 100px; }
+        }
+
+        @keyframes colorChange {
+            0% { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+            50% { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+            100% { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        }
+
+        @keyframes transformMove {
+            0% { transform: translate(0, 0); }
+            50% { transform: translate(200px, 100px); }
+            100% { transform: translate(0, 0); }
+        }
+
+        /* Кнопки управления */
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: center;
+            margin: 30px 0;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn.stop {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        /* Примеры элементов */
+        .example-section {
+            margin: 30px 0;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 12px;
+        }
+
+        .example-box {
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+<div class="container" data-test-id="animated-training-container">
+    <h1 data-test-id="animated-training-title">Animated Training</h1>
+    
+    <div class="description" data-test-id="description-section">
+        Страница для проверки работы метода <code>animated()</code> в Selenide.
+    </div>
+
+    <div class="example-section" data-test-id="additional-examples-section">
+        <div class="example-box" data-test-id="animated-example-box">
+            <div class="box animate" id="animated-box" data-test-id="animated-box"></div>
+        </div>
+        
+        <div class="example-box" data-test-id="static-example-box">
+            <div class="box" id="static-box" data-test-id="static-box"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+</script>
+</body>
+</html>
+
