@@ -679,13 +679,13 @@
     </style>
 </head>
 <body>
-<div class="form-container" data-test-id="employee-form-container">
-    <h1 data-test-id="form-title">Форма регистрации сотрудника</h1>
+<div class="form-container" id="employeeFormContainer" data-test-id="employee-form-container">
+    <h1 id="employeeFormTitle" data-test-id="form-title">Форма регистрации сотрудника</h1>
     
     <form id="employeeForm" data-test-id="employee-form">
-        <div class="form-group">
-            <label for="employeeName" data-test-id="name-label">Имя:</label>
-            <div class="input-wrapper" 
+        <div class="form-group" id="employeeNameGroup">
+            <label id="employeeNameLabel" for="employeeName" data-test-id="name-label">Имя:</label>
+            <div class="input-wrapper" id="employeeNameInputWrapper"
                  data-placeholder="Введите ваше имя"
                  data-title="Имя должно содержать от 2 до 30 символов и только буквы"
                  data-name="employeeName"
@@ -707,9 +707,9 @@
             <div class="error-message" id="nameError">Имя должно содержать от 2 до 30 символов и только буквы</div>
         </div>
 
-        <div class="form-group">
-            <label for="employeeSurname" data-test-id="surname-label">Фамилия:</label>
-            <div class="input-wrapper" 
+        <div class="form-group" id="employeeSurnameGroup">
+            <label id="employeeSurnameLabel" for="employeeSurname" data-test-id="surname-label">Фамилия:</label>
+            <div class="input-wrapper" id="employeeSurnameInputWrapper"
                  data-placeholder="Введите вашу фамилию"
                  data-title="Фамилия должна содержать от 2 до 30 символов и только буквы"
                  data-name="employeeSurname"
@@ -731,9 +731,9 @@
             <div class="error-message" id="surnameError">Фамилия должна содержать от 2 до 30 символов и только буквы</div>
         </div>
 
-        <div class="form-group">
-            <label for="email" data-test-id="email-label">Email:</label>
-            <div class="input-wrapper" 
+        <div class="form-group" id="emailGroup">
+            <label id="emailLabel" for="email" data-test-id="email-label">Email:</label>
+            <div class="input-wrapper" id="emailInputWrapper"
                  data-placeholder="example@email.com"
                  data-title="Введите корректный email адрес"
                  data-name="email">
@@ -748,9 +748,9 @@
             <div class="error-message" id="emailError">Введите корректный email адрес</div>
         </div>
 
-        <div class="form-group">
-            <label for="javaVersion" data-test-id="java-version-label">Версия Java:</label>
-            <div class="input-wrapper" 
+        <div class="form-group" id="javaVersionGroup">
+            <label id="javaVersionLabel" for="javaVersion" data-test-id="java-version-label">Версия Java:</label>
+            <div class="input-wrapper" id="javaVersionInputWrapper"
                  data-placeholder="Выберите версию"
                  data-title="Выберите версию Java"
                  data-name="javaVersion">
@@ -769,8 +769,8 @@
             <div class="error-message" id="javaVersionError">Пожалуйста, выберите версию Java</div>
         </div>
 
-        <div class="form-group">
-            <label data-test-id="experience-label-data-test-id">Опыт автотестирования:</label>
+        <div class="form-group" id="experienceGroup">
+            <label id="experienceLabel" data-test-id="experience-label-data-test-id">Опыт автотестирования:</label>
             <div class="radio-group" id="experience-radio-group-id" data-test-id="experience-radio-group-data-test-id">
                 <div class="radio-item" id="experience-yes-item-id">
                     <input type="radio" id="experienceYes-id" name="autoTestExperience-name" value="Да" data-test-id="experience-yes-data-test-id" required="">
@@ -784,26 +784,26 @@
             <div class="error-message" id="experienceError-id">Пожалуйста, выберите опыт автотестирования</div>
         </div>
 
-        <div class="form-group">
-            <label data-test-id="languages-label">Языки программирования:</label>
-            <div class="checkbox-group" data-test-id="languages-checkbox-group">
-                <div class="checkbox-item">
+        <div class="form-group" id="languagesGroup">
+            <label id="languagesLabel" data-test-id="languages-label">Языки программирования:</label>
+            <div class="checkbox-group" id="languagesCheckboxGroup" data-test-id="languages-checkbox-group">
+                <div class="checkbox-item" id="languageJavaItem">
                     <input type="checkbox" id="java" name="programmingLanguages" value="Java" data-test-id="language-java">
                     <label for="java">Java</label>
                 </div>
-                <div class="checkbox-item">
+                <div class="checkbox-item" id="languagePythonItem">
                     <input type="checkbox" id="python" name="programmingLanguages" value="Python" data-test-id="language-python">
                     <label for="python">Python</label>
                 </div>
-                <div class="checkbox-item">
+                <div class="checkbox-item" id="languageJavascriptItem">
                     <input type="checkbox" id="javascript" name="programmingLanguages" value="JavaScript" data-test-id="language-javascript">
                     <label for="javascript">JavaScript</label>
                 </div>
-                <div class="checkbox-item">
+                <div class="checkbox-item" id="languageCsharpItem">
                     <input type="checkbox" id="csharp" name="programmingLanguages" value="C#" data-test-id="language-csharp">
                     <label for="csharp">C#</label>
                 </div>
-                <div class="checkbox-item">
+                <div class="checkbox-item" id="languageNoneItem">
                     <input type="checkbox" id="none" name="programmingLanguages" value="none" data-test-id="language-none">
                     <label for="none">Не владею</label>
                 </div>
@@ -811,11 +811,11 @@
             <div class="error-message" id="languagesError">Пожалуйста, выберите языки программирования</div>
         </div>
 
-        <button type="submit" class="submit-btn" data-test-id="submit-button">Продолжить</button>
+        <button type="submit" id="submitButton" class="submit-btn" data-test-id="submit-button">Продолжить</button>
     </form>
 </div>
 
-<div class="footer" data-test-id="trainer-footer">Safronov_ID • Тренажер для AQA</div>
+<div class="footer" id="trainerFooter" data-test-id="trainer-footer">Safronov_ID • Тренажер для AQA</div>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -829,6 +829,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Создаем отдельный элемент для кружка
     const iconCircle = document.createElement('div');
+    iconCircle.id = 'formBackIconCircle';
     iconCircle.style.cssText = `
         position: absolute;
         top: -30px;
