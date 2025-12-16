@@ -181,6 +181,7 @@
 
         input[type="text"],
         input[type="email"],
+        input[type="date"],
         select,
         textarea {
             width: 100%;
@@ -188,6 +189,7 @@
             border: 2px solid #e1e5e9;
             border-radius: 12px;
             font-size: 16px;
+            line-height: 1.5;
             transition: all 0.3s ease;
             box-sizing: border-box;
             background: rgba(255, 255, 255, 0.9);
@@ -287,6 +289,11 @@
             position: relative;
             display: inline-block;
             width: 100%;
+            overflow: visible;
+        }
+        
+        .input-wrapper select {
+            overflow: visible;
         }
 
         /* Решение для pseudo(":placeholder") - используем ::before с content: attr(data-placeholder) */
@@ -302,6 +309,11 @@
             z-index: 1;
             opacity: 0;
             transition: opacity 0.3s ease;
+            line-height: 1.5;
+        }
+        
+        .input-wrapper:has(select)::before {
+            z-index: 0;
         }
 
         /* Показываем placeholder когда input пустой и не в фокусе */
@@ -430,6 +442,7 @@
 
         input[type="text"]:focus,
         input[type="email"]:focus,
+        input[type="date"]:focus,
         select:focus,
         textarea:focus {
             outline: none;
@@ -475,6 +488,115 @@
             display: block;
         }
 
+        /* Иконка с подсказкой */
+        .info-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-size: 11px;
+            font-weight: bold;
+            cursor: help;
+            margin-left: 6px;
+            position: relative;
+            vertical-align: middle;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+            z-index: 1;
+        }
+
+        .info-icon:hover {
+            transform: scale(1.15);
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
+        }
+
+        .info-icon {
+            position: relative;
+            z-index: 2147483647;
+        }
+
+        .info-icon .tooltip {
+            visibility: hidden;
+            opacity: 0;
+            width: 280px;
+            max-width: calc(100vw - 40px);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(255, 255, 255, 0.98) 100%);
+            backdrop-filter: blur(10px);
+            color: #333;
+            text-align: left;
+            border-radius: 12px;
+            padding: 14px 16px;
+            position: absolute;
+            z-index: 2147483647;
+            top: calc(100% + 10px);
+            left: 50%;
+            transform: translateX(-50%) translateY(-8px);
+            font-size: 11px;
+            font-weight: normal;
+            line-height: 1.6;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15), 0 2px 8px rgba(102, 126, 234, 0.1);
+            transition: opacity 0.2s ease, visibility 0.2s ease, transform 0.2s ease;
+            pointer-events: none;
+            border: 1px solid rgba(102, 126, 234, 0.15);
+            white-space: normal;
+        }
+
+        /* Если tooltip не помещается справа, показываем слева */
+        .info-icon .tooltip.left {
+            left: auto;
+            right: 0;
+            transform: translateX(0) translateY(-8px);
+        }
+        
+        .info-icon:hover .tooltip.left {
+            transform: translateX(0) translateY(0);
+        }
+
+        .info-icon .tooltip strong {
+            color: #667eea;
+            font-weight: 600;
+            display: block;
+            margin-bottom: 4px;
+            font-size: 12px;
+        }
+
+        .info-icon .tooltip br + strong {
+            margin-top: 10px;
+        }
+
+        .info-icon .tooltip::before {
+            content: "";
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 6px;
+            border-style: solid;
+            border-color: transparent transparent rgba(255, 255, 255, 0.98) transparent;
+            filter: drop-shadow(0 -2px 2px rgba(0, 0, 0, 0.05));
+        }
+
+        .info-icon .tooltip.left::before {
+            left: 20px;
+            transform: translateX(0);
+        }
+
+        .info-icon:hover .tooltip {
+            visibility: visible !important;
+            opacity: 1 !important;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .info-icon:hover .tooltip.left {
+            visibility: visible !important;
+            opacity: 1 !important;
+            transform: translateX(-50%) translateY(0);
+        }
+
         /* Анимация появления ошибок */
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(-5px); }
@@ -495,11 +617,36 @@
         /* Стили для select */
         select {
             appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
             background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
             background-position: right 12px center;
             background-repeat: no-repeat;
             background-size: 16px;
-            padding-right: 40px;
+            padding: 16px 40px 16px 20px;
+            line-height: 1.5;
+            height: auto;
+            min-height: 54px;
+            overflow: visible;
+            vertical-align: middle;
+            display: block;
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* Выпадающий список select должен быть ниже tooltip */
+        select:focus {
+            z-index: 1;
+        }
+        
+        /* Гарантируем, что tooltip всегда поверх всех элементов */
+        .info-icon .tooltip {
+            isolation: isolate;
+        }
+        
+        select option {
+            padding: 12px 20px;
+            line-height: 1.5;
         }
 
         /* Улучшенные стили чекбоксов */
@@ -682,6 +829,23 @@
 <div class="form-container" id="employeeFormContainer" data-test-id="employee-form-container">
     <h1 id="employeeFormTitle" data-test-id="form-title">Форма регистрации сотрудника</h1>
     
+    <div class="form-group" id="currentDateGroup">
+        <label id="currentDateLabel" for="currentDate" data-test-id="current-date-label">
+            Текущая дата:
+            <span class="info-icon" id="currentDateInfoIcon" data-test-id="current-date-info-icon">
+                ℹ
+                <span class="tooltip" id="currentDateTooltip">
+                    <strong>Формат отображения:</strong> dd.MM.yyyy (например, 15.12.2025)<br><br>
+                    <strong>Примечание:</strong> Поле "Текущая дата" отображается в формате dd.MM.yyyy, так как форматирование задано в JavaScript.
+                </span>
+            </span>
+        </label>
+        <div class="input-wrapper" id="currentDateInputWrapper">
+            <input type="text" id="currentDate" name="currentDate" data-test-id="current-date-input" readonly
+                   style="background: rgba(240, 240, 240, 0.9); cursor: default;">
+        </div>
+    </div>
+    
     <form id="employeeForm" data-test-id="employee-form">
         <div class="form-group" id="employeeNameGroup">
             <label id="employeeNameLabel" for="employeeName" data-test-id="name-label">Имя:</label>
@@ -746,6 +910,22 @@
                        placeholder="example@email.com">
             </div>
             <div class="error-message" id="emailError">Введите корректный email адрес</div>
+        </div>
+
+        <div class="form-group" id="birthdateGroup">
+            <label id="birthdateLabel" for="birthdate" data-test-id="birthdate-label">
+                Дата рождения:
+                <span class="info-icon" id="birthdateInfoIcon" data-test-id="birthdate-info-icon">
+                    ℹ
+                    <span class="tooltip" id="birthdateTooltip">
+                        <strong>Формат отображения:</strong> yyyy-MM-dd (например, 2025-12-15)<br><br>
+                        <strong>Примечание:</strong> Поле "Дата рождения" использует формат yyyy-MM-dd для значения (value), но браузер отображает дату в формате, соответствующем локали пользователя (например, для русской локали это может быть 15.12.2025, для английской - 12/15/2025). Формат отображения зависит от настроек браузера и операционной системы пользователя.
+                    </span>
+                </span>
+            </label>
+            <div class="input-wrapper" id="birthdateInputWrapper">
+                <input type="date" id="birthdate" name="birthdate" data-testid="birthdate-input">
+            </div>
         </div>
 
         <div class="form-group" id="javaVersionGroup">
@@ -820,6 +1000,65 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     console.log('DOM загружен, инициализируем валидацию...');
+    
+    // Обновление текущей даты
+    function updateCurrentDate() {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        const formattedDate = `${day}.${month}.${year}`;
+        const currentDateInput = document.getElementById('currentDate');
+        if (currentDateInput) {
+            currentDateInput.value = formattedDate;
+        }
+    }
+    
+    // Установка текущей даты в поле даты рождения (формат yyyy-MM-dd)
+    function setBirthdateToCurrent() {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        const dateValue = `${year}-${month}-${day}`;
+        const birthdateInput = document.getElementById('birthdate');
+        if (birthdateInput) {
+            birthdateInput.value = dateValue;
+        }
+    }
+    
+    // Обновляем дату при загрузке и каждую секунду
+    updateCurrentDate();
+    setInterval(updateCurrentDate, 1000);
+    
+    // Устанавливаем текущую дату в поле даты рождения при загрузке
+    setBirthdateToCurrent();
+    
+    // Автоматическое определение позиции tooltip при наведении (для адаптивности)
+    document.querySelectorAll('.info-icon').forEach(icon => {
+        icon.addEventListener('mouseenter', function() {
+            const tooltip = this.querySelector('.tooltip');
+            if (!tooltip) return;
+            
+            // Небольшая задержка для правильного расчета позиции
+            setTimeout(() => {
+                const iconRect = this.getBoundingClientRect();
+                const tooltipRect = tooltip.getBoundingClientRect();
+                const viewportWidth = window.innerWidth;
+                
+                // Проверяем, помещается ли tooltip справа
+                const spaceRight = viewportWidth - iconRect.right;
+                const spaceLeft = iconRect.left;
+                
+                // Если справа не хватает места, но слева достаточно - показываем слева
+                if (spaceRight < tooltipRect.width / 2 + 20 && spaceLeft > tooltipRect.width / 2 + 20) {
+                    tooltip.classList.add('left');
+                } else {
+                    tooltip.classList.remove('left');
+                }
+            }, 10);
+        });
+    });
     
     // Управление стрелкой и кликабельностью иконки
     const formContainer = document.querySelector('.form-container');
