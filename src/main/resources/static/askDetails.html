@@ -163,6 +163,7 @@
         .form-group {
             margin-bottom: 28px;
             position: relative;
+            overflow: visible;
         }
 
         label {
@@ -172,6 +173,7 @@
             color: #333;
             font-size: 16px;
             transition: all 0.3s ease;
+            overflow: visible;
         }
 
         .form-group:focus-within label {
@@ -182,6 +184,7 @@
         input[type="text"],
         input[type="email"],
         input[type="date"],
+        input[type="datetime-local"],
         select,
         textarea {
             width: 100%;
@@ -443,6 +446,7 @@
         input[type="text"]:focus,
         input[type="email"]:focus,
         input[type="date"]:focus,
+        input[type="datetime-local"]:focus,
         select:focus,
         textarea:focus {
             outline: none;
@@ -506,17 +510,12 @@
             vertical-align: middle;
             transition: all 0.2s ease;
             flex-shrink: 0;
-            z-index: 1;
+            z-index: 9999;
         }
 
         .info-icon:hover {
             transform: scale(1.15);
             box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
-        }
-
-        .info-icon {
-            position: relative;
-            z-index: 2147483647;
         }
 
         .info-icon .tooltip {
@@ -531,7 +530,7 @@
             border-radius: 12px;
             padding: 14px 16px;
             position: absolute;
-            z-index: 2147483647;
+            z-index: 99999;
             top: calc(100% + 10px);
             left: 50%;
             transform: translateX(-50%) translateY(-8px);
@@ -637,11 +636,6 @@
         /* Выпадающий список select должен быть ниже tooltip */
         select:focus {
             z-index: 1;
-        }
-        
-        /* Гарантируем, что tooltip всегда поверх всех элементов */
-        .info-icon .tooltip {
-            isolation: isolate;
         }
         
         select option {
@@ -928,6 +922,61 @@
             </div>
         </div>
 
+        <div class="form-group" id="datetimeGroup">
+            <label id="datetimeLabel" for="datetime" data-test-id="datetime-label">
+                Дата и время:
+                <span class="info-icon" id="datetimeInfoIcon" data-test-id="datetime-info-icon">
+                    ℹ
+                    <span class="tooltip" id="datetimeTooltip">
+                        <strong>Формат:</strong> yyyy-MM-dd'T'HH:mm:ss (например, 2025-12-15T14:30:00)<br><br>
+                        <strong>Примечание:</strong> Поле "Дата и время" требует ввода в формате ISO 8601 без timezone: yyyy-MM-dd'T'HH:mm:ss
+                    </span>
+                </span>
+            </label>
+            <div class="input-wrapper" id="datetimeInputWrapper"
+                 data-placeholder="2025-12-15T14:30:00"
+                 data-title="Формат: yyyy-MM-dd'T'HH:mm:ss"
+                 data-name="datetime"
+                 data-pattern="\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}">
+                <input type="text" id="datetime" name="datetime" data-test-id="datetime-input" 
+                       data-placeholder="2025-12-15T14:30:00"
+                       data-title="Формат: yyyy-MM-dd'T'HH:mm:ss"
+                       data-name="datetime"
+                       data-pattern="\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}"
+                       required 
+                       pattern="\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}"
+                       title="Формат: yyyy-MM-dd'T'HH:mm:ss (например, 2025-12-15T14:30:00)"
+                       placeholder="2025-12-15T14:30:00">
+            </div>
+            <div class="error-message" id="datetimeError">Введите дату и время в формате yyyy-MM-dd'T'HH:mm:ss (например, 2025-12-15T14:30:00)</div>
+        </div>
+
+        <div class="form-group" id="postalCodeGroup">
+            <label id="postalCodeLabel" for="postalCode" data-test-id="postal-code-label">Почтовый индекс:</label>
+            <div class="input-wrapper" id="postalCodeInputWrapper"
+                 data-placeholder="123456"
+                 data-title="Почтовый индекс должен содержать 6 цифр"
+                 data-name="postalCode"
+                 data-pattern="\d{6}"
+                 data-minlength="6"
+                 data-maxlength="6">
+                <input type="text" id="postalCode" name="postalCode" data-test-id="postal-code-input" 
+                       data-placeholder="123456"
+                       data-title="Почтовый индекс должен содержать 6 цифр"
+                       data-name="postalCode"
+                       data-pattern="\d{6}"
+                       data-minlength="6"
+                       data-maxlength="6"
+                       required 
+                       minlength="6" 
+                       maxlength="6"
+                       pattern="\d{6}" 
+                       title="Почтовый индекс должен содержать 6 цифр"
+                       placeholder="123456">
+            </div>
+            <div class="error-message" id="postalCodeError">Почтовый индекс должен содержать 6 цифр</div>
+        </div>
+
         <div class="form-group" id="javaVersionGroup">
             <label id="javaVersionLabel" for="javaVersion" data-test-id="java-version-label">Версия Java:</label>
             <div class="input-wrapper" id="javaVersionInputWrapper"
@@ -1027,12 +1076,37 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
+    // Установка текущей даты и времени в поле datetime (формат yyyy-MM-dd'T'HH:mm:ss)
+    // Секунды устанавливаются в 00 для соответствия LocalDateTime.of() без указания секунд
+    function setDatetimeToCurrent() {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        const seconds = '00'; // Устанавливаем секунды в 00 для соответствия LocalDateTime.of()
+        const datetimeValue = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
+        const datetimeInput = document.getElementById('datetime');
+        if (datetimeInput) {
+            datetimeInput.value = datetimeValue;
+            // Устанавливаем атрибут value напрямую для Selenide
+            datetimeInput.setAttribute('value', datetimeValue);
+            // Обновляем атрибут value для Selenide
+            updateValueAttribute(datetimeInput);
+            console.log('Datetime установлено:', datetimeValue);
+        }
+    }
+    
     // Обновляем дату при загрузке и каждую секунду
     updateCurrentDate();
     setInterval(updateCurrentDate, 1000);
     
     // Устанавливаем текущую дату в поле даты рождения при загрузке
     setBirthdateToCurrent();
+    
+    // Устанавливаем текущую дату и время в поле datetime при загрузке
+    setDatetimeToCurrent();
     
     // Автоматическое определение позиции tooltip при наведении (для адаптивности)
     document.querySelectorAll('.info-icon').forEach(icon => {
@@ -1177,6 +1251,16 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log('✅ Email валиден');
         }
         
+        // Валидация даты и времени
+        const datetimeField = document.getElementById('datetime');
+        console.log('Дата и время:', datetimeField.value);
+        if (!validateFieldForce(datetimeField, 'datetimeError', validationRules.datetime)) {
+            console.log('❌ Дата и время невалидны');
+            isValid = false;
+        } else {
+            console.log('✅ Дата и время валидны');
+        }
+        
         // Валидация версии Java
         const javaField = document.getElementById('javaVersion');
         console.log('Java версия:', javaField.value);
@@ -1226,6 +1310,7 @@ document.addEventListener('DOMContentLoaded', function() {
         name: (value) => value.length >= 2 && value.length <= 30 && /^[A-Za-zА-Яа-яЁё\s]+$/.test(value),
         surname: (value) => value.length >= 2 && value.length <= 30 && /^[A-Za-zА-Яа-яЁё\s]+$/.test(value),
         email: (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value),
+        datetime: (value) => /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}$/.test(value),
         javaVersion: (value) => value !== '',
         experience: (value) => value !== '',
         languages: (value) => value !== 'none' // Проверяем, что не выбрано "Не владею"
@@ -1345,6 +1430,16 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('email').addEventListener('blur', function() {
         updateValueAttribute(this);
         validateField(this, 'emailError', validationRules.email);
+    });
+
+    document.getElementById('datetime').addEventListener('input', function() {
+        updateValueAttribute(this);
+        validateField(this, 'datetimeError', validationRules.datetime);
+    });
+
+    document.getElementById('datetime').addEventListener('blur', function() {
+        updateValueAttribute(this);
+        validateField(this, 'datetimeError', validationRules.datetime);
     });
 
     document.getElementById('javaVersion').addEventListener('change', function() {
